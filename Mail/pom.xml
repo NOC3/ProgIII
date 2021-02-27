@@ -7,11 +7,30 @@
     <groupId>org.example</groupId>
     <artifactId>Mail</artifactId>
     <version>1.0-SNAPSHOT</version>
+
     <dependencies>
         <dependency>
             <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>15.0.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
-            <version>11.0.1</version>
+            <version>15.0.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-graphics</artifactId>
+            <version>15.0.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-base</artifactId>
+            <version>15.0.1</version>
         </dependency>
     </dependencies>
 
@@ -20,4 +39,40 @@
         <maven.compiler.target>15</maven.compiler.target>
     </properties>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <release>11</release>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>0.0.5</version>
+                <configuration>
+                    <mainClass>Server.ServerApp</mainClass>
+                </configuration>
+                <!--                <executions>-->
+                <!--                    <execution>-->
+                <!--                        <id>Server</id>-->
+                <!--                        <configuration>-->
+                <!--                            <mainClass>Server.ServerApp</mainClass>-->
+                <!--                        </configuration>-->
+                <!--                    </execution>-->
+                <!--                    <execution>-->
+                <!--                        <id>Client</id>-->
+                <!--                        <configuration>-->
+                <!--                            <mainClass>Client.ClientApp</mainClass>-->
+                <!--                        </configuration>-->
+                <!--                    </execution>-->
+                <!--                </executions>-->
+            </plugin>
+
+        </plugins>
+    </build>
 </project>

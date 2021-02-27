@@ -26,4 +26,8 @@ public class Message {
     public int getOperation() {
         return operation;
     }
+
+    public Object getObj() {
+        return obj;
+    }
 }

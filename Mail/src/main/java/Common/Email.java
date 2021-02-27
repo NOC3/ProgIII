@@ -55,6 +55,7 @@ public class Email implements Serializable{
         System.out.println(this.toString());
     }
 
+    @Override
     public String toString(){
         return "Mittente: " + sender + "\nDestinatari: " + recipients +"\nOggetto: "+ subject +"\nTesto: "+ text + "\nData: "+ String.valueOf(date);
     }

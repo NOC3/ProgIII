@@ -1,0 +1,10 @@
+Server/ServerApp.class
+Common/Message.class
+Common/Email.class
+Server/ServerController.class
+Client/ClientApp.class
+Server/ServerModel$Server.class
+Client/ClientModel.class
+Client/Login.class
+Client/ClientController.class
+Server/ServerModel.class
