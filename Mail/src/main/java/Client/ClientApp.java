@@ -13,13 +13,15 @@ public class ClientApp extends Application {
 
         try{
 
-            Parent loader = FXMLLoader.load(getClass().getResource("/login.fxml"));
-//            Parent root = loader.load();
-            primaryStage.setTitle("login");
-            primaryStage.setScene(new Scene(loader, 600, 400));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/login.fxml"));
+            Parent root = loader.load();
+
+            primaryStage.setTitle("Login");
+            primaryStage.setScene(new Scene(root));
             primaryStage.show();
 
             Login l = new Login();
+
         } catch (Exception e){
             System.out.println(e.getLocalizedMessage());
         }
