@@ -13,6 +13,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import netscape.javascript.JSObject;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -25,7 +26,7 @@ import java.util.concurrent.Callable;
 public class Login{
 
     private String host = "localhost";        //fissato
-    private int port = 49152;                 //o 65535, stando a wikipedia
+    private final int port = 49152;                 //o 65535, stando a wikipedia
 //    https://www.adminsub.net/tcp-udp-port-finder <--- controllo porte
 
     @FXML
@@ -42,7 +43,7 @@ public class Login{
         Socket socket = null;
         try {
             //pattern matching per l'email
-            Message mex = new Message(Message.LOGIN, loginEmail.getText(), "Try connection");
+            Message mex = new Message(Message.LOGIN, loginEmail.getText());
 
             socket = new Socket(host, port);
 
@@ -53,11 +54,10 @@ public class Login{
             Message response = (Message) in.readObject();
 
             if (response.getOperation() == Message.SUCCESS) {
-                //chiudi login e apri casella
-                System.out.println("loggato utente: "+loginEmail.getText());
+
 
                 //apro la view main
-                openMainView();
+                openMainView(new JSONObject((String)response.getObj()));
 
             } else {
                 //error message
@@ -84,7 +84,7 @@ public class Login{
         }
     }
 
-    private void openMainView(){
+    private void openMainView(JSONObject mailbox){
         //nascondo la view, potrebbe essere utile recuperarla con il logout??
         loginSubmit.getScene().getWindow().hide();
         Stage mainViewStage = new Stage();

@@ -4,6 +4,7 @@ Common/Email.class
 Server/ServerController.class
 Client/ClientApp.class
 Server/ServerModel$Server.class
+Server/ServerModel$Server$Request.class
 Client/ClientModel.class
 Client/Login.class
 Client/ClientController.class
