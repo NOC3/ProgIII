@@ -11,12 +11,15 @@ public class ServerApp extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            ServerModel a = new ServerModel();
-            Parent loader = FXMLLoader.load(getClass().getResource("/logger.fxml"));
-//            Parent root = loader.load();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/logger.fxml"));
+            Parent root = loader.load();
             primaryStage.setTitle("Server logger");
-            primaryStage.setScene(new Scene(loader, 600, 400));
+            primaryStage.setScene(new Scene(root, 600, 400));
             primaryStage.show();
+
+            ServerController controller = loader.getController();
+            ServerModel model = new ServerModel();
+            controller.setModel(model);
 
         } catch (Exception e) {
             System.out.println(e.getLocalizedMessage());

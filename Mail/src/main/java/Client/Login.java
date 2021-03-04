@@ -54,11 +54,8 @@ public class Login{
             Message response = (Message) in.readObject();
 
             if (response.getOperation() == Message.SUCCESS) {
-
-
                 //apro la view main
                 openMainView(new JSONObject((String)response.getObj()));
-
             } else {
                 //error message
                 loginErrorMsg.setText("Errore");

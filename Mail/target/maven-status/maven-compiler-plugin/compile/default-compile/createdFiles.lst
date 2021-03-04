@@ -1,4 +1,5 @@
 Server/ServerApp.class
+Server/ServerModel$Log.class
 Common/Message.class
 Common/Email.class
 Server/ServerController.class

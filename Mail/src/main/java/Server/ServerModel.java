@@ -1,26 +1,31 @@
 package Server;
 
 import Common.Message;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import org.json.*;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class ServerModel {
-    Set<String> usersMail; //contains all "registered"/valid user's mail
-    Server srv;
+    private Set<String> usersMail; //contains all "registered"/valid user's mail
+    private Server srv;
+    private ObservableList<Log> logs;
 
     public ServerModel() {
         usersMail = buildUsersMail();
         srv = new Server();
         srv.start();
-
+        logs = FXCollections.observableArrayList();
     }
 
     //forse meglio set<File> per accessi futuri, es eliminazione/nuova mail
@@ -44,16 +49,19 @@ public class ServerModel {
         return allUsers;
     }
 
+    public ObservableList<Log> getLogs() {
+        return logs;
+    }
 
-    private boolean checkLogin(String user){
+    private boolean checkLogin(String user) {
         return usersMail.contains(user);
     }
 
-    private JSONObject getMailbox(String user){
+    private JSONObject getMailbox(String user) {
         JSONObject obj = null;
         try {
             ClassLoader loader = Thread.currentThread().getContextClassLoader();
-            URL url = loader.getResource("./mails/"+user+".json");
+            URL url = loader.getResource("./mails/" + user + ".json");
             assert url != null;
             String path = url.getPath();
             FileReader filereader = new FileReader(path);
@@ -63,7 +71,7 @@ public class ServerModel {
             e.printStackTrace();
         }
         // typecasting obj to JSONObject
-         return obj;
+        return obj;
     }
 
     /*
@@ -74,7 +82,7 @@ public class ServerModel {
 
     //forse deve essere un thread autonomo
     class Server extends Thread { //la pool
-        ServerSocket serverSocket;
+        private ServerSocket serverSocket;
         private static final int THREADNUM = 10;
         private final int port = 49152;
 
@@ -84,7 +92,7 @@ public class ServerModel {
                 //new threadPool
                 ExecutorService execPool = Executors.newFixedThreadPool(THREADNUM);
                 serverSocket = new ServerSocket(port);
-                while(true) {
+                while (true) {
                     Socket incoming = serverSocket.accept();
                     execPool.execute(new Request(incoming));
 
@@ -115,31 +123,33 @@ public class ServerModel {
                     ObjectInputStream inputRequest = new ObjectInputStream(clientSocket.getInputStream());
                     Object msg = inputRequest.readObject();
 
-                    if (msg instanceof Message){
-                        message=(Message)msg;
-                    }else{
+                    if (msg instanceof Message) {
+                        message = (Message) msg;
+                    } else {
                         //stop esecuzione
                     }
-                }catch(Exception e){
+                } catch (Exception e) {
 
-                }finally{
+                } finally {
 
                 }
 
-                switch(message.getOperation()){
+                switch (message.getOperation()) {
                     case Message.SEND_NEW_EMAIL:
                         break;
                     case Message.REMOVE_EMAIL:
                         break;
                     case Message.LOGIN:
-                        if(model.checkLogin((String)message.getObj())){
-                            sendResponse( Message.SUCCESS,
-                                    (model.getMailbox((String)message.getObj()).toString())
+                        if (model.checkLogin((String) message.getObj())) {
+                            sendResponse(Message.SUCCESS,
+                                    (model.getMailbox((String) message.getObj()).toString())
                             );
-                        }else{
-                            sendResponse( Message.ERROR,
+                            model.logs.add(new Log("Login success from: " + ((String) message.getObj())));
+                        } else {
+                            sendResponse(Message.ERROR,
                                     "User not found"
                             );
+                            model.logs.add(new Log("Login fail from: " + ((String)message.getObj())));
                         }
 
 
@@ -150,15 +160,35 @@ public class ServerModel {
                 }
             }
 
-            private void sendResponse(int status, Object o){
+            private void sendResponse(int status, Object o) {
                 try {
-                    Message m = new Message(status,o);
+                    Message m = new Message(status, o);
                     ObjectOutputStream outputRequest = new ObjectOutputStream(clientSocket.getOutputStream());
                     outputRequest.writeObject(m);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
+        }
+    }
+
+    class Log {
+        private String logEvent;
+        private String logTime;
+
+        public Log(String event) {
+            Calendar cal = Calendar.getInstance();
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+            logTime = sdf.format(cal.getTime());
+            logEvent = event;
+        }
+
+        public String getLogEvent() {
+            return logEvent;
+        }
+
+        public String getLogTime() {
+            return logTime;
         }
     }
 }

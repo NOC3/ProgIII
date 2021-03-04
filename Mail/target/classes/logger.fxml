@@ -7,10 +7,10 @@
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Server.ServerController">
    <children>
       <Pane prefHeight="400.0" prefWidth="600.0" />
-      <TableView prefHeight="400.0" prefWidth="600.0">
+      <TableView fx:id="logs" prefHeight="400.0" prefWidth="600.0">
         <columns>
-          <TableColumn prefWidth="253.0" text="time" />
-          <TableColumn minWidth="0.0" prefWidth="346.0" text="event" />
+          <TableColumn fx:id="time" prefWidth="253.0" text="time" />
+          <TableColumn fx:id="event" minWidth="0.0" prefWidth="346.0" text="event" />
         </columns>
       </TableView>
    </children>
