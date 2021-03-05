@@ -3,6 +3,8 @@ package Common;
 import javafx.beans.property.SimpleStringProperty;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -22,6 +24,24 @@ public class Email implements Serializable{
         this.text = testo;
         this.date = data;
     }
+
+    public Email(Object id, Object mittente, Object destinatari, Object oggetto, Object testo, Object data) {
+        ID = (int)id;
+        this.sender = (String)mittente;
+        this.recipients = recipientsToList((String)destinatari);
+        this.subject = (String)oggetto;
+        this.text = (String)testo;
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");;
+        Date d = null;
+        try {
+            d = formatter.parse((String)data);
+        } catch (ParseException e) {
+            System.out.println("Formato data non riconosciuto");
+        }finally {
+            this.date = d;
+        }
+    }
+
 
     public Date getDate(){
         return date;
@@ -93,5 +113,21 @@ public class Email implements Serializable{
         SimpleStringProperty t = new SimpleStringProperty();
         t.set(text);
         return t;
+    }
+
+    public ArrayList<String> recipientsToList(String s){
+        ArrayList<String> al = new ArrayList<>();
+        for(String st : s.split(",")){
+            al.add(st);
+        }
+        return al;
+    }
+
+    public String recipientsToJSON(ArrayList<String> list){
+        String res="";
+        for(String elem : list){
+            res+=elem;
+        }
+        return res;
     }
 }

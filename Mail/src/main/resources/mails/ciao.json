@@ -1,21 +1,38 @@
 {
-  "lastName": "Smith",
-  "address": {
-    "streetAddress": "21 2nd Street",
-    "city": "New York",
-    "state": "NY",
-    "postalCode": 10021
-  },
-  "age": 25,
-  "phoneNumbers": [
+  "inbox": [
+        {
+          "id": 1,
+          "sender": "ciao",
+          "recipients" : "tu",
+          "subject": "prova",
+          "text": "ciao",
+          "date": "10-02-2099 14:00"
+        },
+        {
+          "id": 2,
+          "sender": "ciao",
+          "recipients" : "tu",
+          "subject": "prova",
+          "text": "ciao",
+          "date": "10-02-1299 14:00"
+        }
+    ],
+  "sent":[
     {
-      "type": "home",
-      "number": "212 555-1234"
+      "id": 1,
+      "sender": "ciao",
+      "recipients" : "tu, lui, l'altro",
+      "subject": "prova",
+      "text": "ciao",
+      "date": "10-02-1999 14:00"
     },
     {
-      "type": "fax",
-      "number": "212 555-1234"
+      "id": 2,
+      "sender": "ciao",
+      "recipients" : "tu",
+      "subject": "prova",
+      "text": "ciao",
+      "date": "10-02-1939 15:00"
     }
-  ],
-  "firstName": "John"
+  ]
 }

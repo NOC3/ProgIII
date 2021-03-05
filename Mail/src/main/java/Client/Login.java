@@ -91,6 +91,11 @@ public class Login{
             mainViewStage.setTitle("Main");
             mainViewStage.setScene(new Scene(root));
             mainViewStage.show();
+
+            ClientController controller = loader.getController();
+            ClientModel model = new ClientModel(mailbox);
+            controller.setModel(model);
+
         }catch(Exception e){
             System.out.println(e);
         }

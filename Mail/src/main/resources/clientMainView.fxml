@@ -1,10 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.text.Text?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Client.ClientController">
-   <children>
-      <Text layoutX="202.0" layoutY="163.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Main del client" wrappingWidth="196.86572265625" />
-   </children>
+    <children>
+        <TabPane prefHeight="400.0" prefWidth="466.0" tabClosingPolicy="UNAVAILABLE">
+            <tabs>
+                <Tab fx:id="inbox" text="Ricevuti">
+               <content>
+                  <SplitPane dividerPositions="0.4032697547683924" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0">
+                    <items>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                           <children>
+                              <TableView fx:id="inboxList" layoutX="-5.0" layoutY="-1.0" prefHeight="191.0" prefWidth="476.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                <columns>
+                                    <TableColumn fx:id="inboxDateColumn" prefWidth="75.0" text="Data" />
+                                    <TableColumn fx:id="inboxSenderColumn" prefWidth="75.0" text="Mittente" />
+                                    <TableColumn fx:id="inboxSubjectColumn" prefWidth="75.0" text="Oggetto" />
+                                </columns>
+                              </TableView>
+                           </children>
+                        </AnchorPane>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0" />
+                    </items>
+                  </SplitPane>
+               </content>
+                </Tab>
+                <Tab fx:id="sent" text="Inviati">
+                    <content>
+                    <SplitPane dividerPositions="0.4032697547683924" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0">
+                        <items>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                                <children>
+                                    <TableView fx:id="sentList" layoutX="-5.0" layoutY="-1.0" prefHeight="191.0" prefWidth="476.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                        <columns>
+                                            <TableColumn fx:id="sentDateColumn" prefWidth="75.0" text="Data" />
+                                            <TableColumn fx:id="sentRecipientsColumn" prefWidth="75.0" text="Destinatari" />
+                                            <TableColumn fx:id="sentSubjectColumn" prefWidth="75.0" text="Oggetto" />
+                                        </columns>
+                                    </TableView>
+                                </children>
+                            </AnchorPane>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0" />
+                        </items>
+                    </SplitPane>
+                </content>
+                </Tab>
+                <Tab text="Nuova mail">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                            <children>
+                                <TextField layoutX="14.0" layoutY="14.0" prefHeight="26.0" prefWidth="437.0" promptText="Destinatari" />
+                                <TextField layoutX="14.0" layoutY="51.0" prefHeight="26.0" prefWidth="437.0" promptText="Oggetto" />
+                                <TextArea layoutX="14.0" layoutY="87.0" prefHeight="220.0" prefWidth="438.0" promptText="Scrivi qua" />
+                                <Button layoutX="202.0" layoutY="327.0" mnemonicParsing="false" text="Invia" />
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+        <TitledPane animated="false" layoutX="465.0" prefHeight="400.0" prefWidth="140.0" text="Notifiche">
+            <content>
+                <ListView prefHeight="200.0" prefWidth="200.0" />
+            </content>
+        </TitledPane>
+    </children>
 </AnchorPane>

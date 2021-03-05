@@ -15,9 +15,6 @@ public class ServerController {
     @FXML
     private TableColumn<ServerModel.Log, String> event;
 
-    public ServerController(){
-
-    }
 
     public void setModel(ServerModel model){
         this.model = model;
@@ -30,6 +27,4 @@ public class ServerController {
 
         logs.setItems(this.model.getLogs());
     }
-
-
 }

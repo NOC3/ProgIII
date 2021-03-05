@@ -22,10 +22,10 @@ public class ServerModel {
     private ObservableList<Log> logs;
 
     public ServerModel() {
+        logs = FXCollections.observableArrayList();
         usersMail = buildUsersMail();
         srv = new Server();
         srv.start();
-        logs = FXCollections.observableArrayList();
     }
 
     //forse meglio set<File> per accessi futuri, es eliminazione/nuova mail
@@ -74,9 +74,7 @@ public class ServerModel {
         return obj;
     }
 
-    /*
-     * bozza per il 01/03
-     * */
+
 
     //classi interne al model di comunicazione
 
@@ -149,7 +147,7 @@ public class ServerModel {
                             sendResponse(Message.ERROR,
                                     "User not found"
                             );
-                            model.logs.add(new Log("Login fail from: " + ((String)message.getObj())));
+                            model.logs.add(new Log("Login fail from: " + ((String) message.getObj())));
                         }
 
 
