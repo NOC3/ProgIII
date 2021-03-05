@@ -78,7 +78,6 @@ public class ServerModel {
 
     //classi interne al model di comunicazione
 
-    //forse deve essere un thread autonomo
     class Server extends Thread { //la pool
         private ServerSocket serverSocket;
         private static final int THREADNUM = 10;

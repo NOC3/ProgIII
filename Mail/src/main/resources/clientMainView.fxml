@@ -1,11 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Text?>
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Client.ClientController">
     <children>
-        <TabPane prefHeight="400.0" prefWidth="466.0" tabClosingPolicy="UNAVAILABLE">
+        <TabPane prefHeight="400.0" prefWidth="465.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <tabs>
                 <Tab fx:id="inbox" text="Ricevuti">
                <content>
@@ -22,7 +32,16 @@
                               </TableView>
                            </children>
                         </AnchorPane>
-                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0" />
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                           <children>
+                              <Text layoutX="14.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Mittente" />
+                              <Text layoutX="14.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Data" />
+                              <Text fx:id="inboxSenderText" layoutX="112.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" />
+                              <Text fx:id="inboxDataText" layoutX="112.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" text="" />
+                              <Text layoutX="15.0" layoutY="67.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Oggetto" />
+                              <Text fx:id="inboxSubjectText" layoutX="112.0" layoutY="67.0" strokeType="OUTSIDE" strokeWidth="0.0" text="" />
+                              <Text fx:id="inboxTextText" layoutX="15.0" layoutY="93.0" strokeType="OUTSIDE" strokeWidth="0.0" text="" wrappingWidth="443.7294921875" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="80.0" />
+                           </children></AnchorPane>
                     </items>
                   </SplitPane>
                </content>
@@ -33,7 +52,7 @@
                         <items>
                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                                 <children>
-                                    <TableView fx:id="sentList" layoutX="-5.0" layoutY="-1.0" prefHeight="191.0" prefWidth="476.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <TableView fx:id="sentList" layoutX="-5.0" layoutY="-1.0" prefHeight="144.0" prefWidth="466.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-6.0" AnchorPane.topAnchor="0.0">
                                         <columns>
                                             <TableColumn fx:id="sentDateColumn" prefWidth="75.0" text="Data" />
                                             <TableColumn fx:id="sentRecipientsColumn" prefWidth="75.0" text="Destinatari" />
@@ -42,7 +61,16 @@
                                     </TableView>
                                 </children>
                             </AnchorPane>
-                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0" />
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                           <children>
+                              <Text layoutX="14.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Destinatari" />
+                              <Text layoutX="14.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Data" />
+                              <Text layoutX="15.0" layoutY="67.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Oggetto" />
+                              <Text fx:id="sentSubjectText" layoutX="112.0" layoutY="67.0" strokeType="OUTSIDE" strokeWidth="0.0" text="" />
+                              <Text fx:id="sentTextText" layoutX="15.0" layoutY="93.0" strokeType="OUTSIDE" strokeWidth="0.0" text="" wrappingWidth="443.7294921875" />
+                              <Text fx:id="sentRecipientsText" layoutX="112.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="" />
+                              <Text fx:id="sentDataText" layoutX="112.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" text="" />
+                           </children></AnchorPane>
                         </items>
                     </SplitPane>
                 </content>
@@ -51,17 +79,17 @@
                     <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                             <children>
-                                <TextField layoutX="14.0" layoutY="14.0" prefHeight="26.0" prefWidth="437.0" promptText="Destinatari" />
-                                <TextField layoutX="14.0" layoutY="51.0" prefHeight="26.0" prefWidth="437.0" promptText="Oggetto" />
-                                <TextArea layoutX="14.0" layoutY="87.0" prefHeight="220.0" prefWidth="438.0" promptText="Scrivi qua" />
-                                <Button layoutX="202.0" layoutY="327.0" mnemonicParsing="false" text="Invia" />
+                                <TextField layoutX="14.0" layoutY="14.0" prefHeight="26.0" prefWidth="437.0" promptText="Destinatari" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0" />
+                                <TextField layoutX="14.0" layoutY="51.0" prefHeight="26.0" prefWidth="437.0" promptText="Oggetto" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="50.0" />
+                                <TextArea layoutX="14.0" layoutY="87.0" prefHeight="220.0" prefWidth="438.0" promptText="Scrivi qua" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="87.0" />
+                                <Button alignment="CENTER" layoutX="275.0" layoutY="321.0" maxHeight="26.0" maxWidth="50.0" minHeight="26.0" minWidth="50.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="50.0" text="Invia" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="275.0" AnchorPane.rightAnchor="275.0" />
                             </children>
                         </AnchorPane>
                     </content>
                 </Tab>
             </tabs>
         </TabPane>
-        <TitledPane animated="false" layoutX="465.0" prefHeight="400.0" prefWidth="140.0" text="Notifiche">
+        <TitledPane animated="false" layoutX="465.0" prefHeight="400.0" prefWidth="242.0" text="Notifiche" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <content>
                 <ListView prefHeight="200.0" prefWidth="200.0" />
             </content>

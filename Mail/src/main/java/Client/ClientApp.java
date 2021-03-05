@@ -18,6 +18,7 @@ public class ClientApp extends Application {
 
             primaryStage.setTitle("Login");
             primaryStage.setScene(new Scene(root));
+
             primaryStage.show();
 
             Login l = new Login();
