@@ -55,7 +55,7 @@ public class Login{
 
             if (response.getOperation() == Message.SUCCESS) {
                 //apro la view main
-                openMainView(new JSONObject((String)response.getObj()));
+                openMainView(loginEmail.getText(), new JSONObject((String)response.getObj()));
             } else {
                 //error message
                 loginErrorMsg.setText("Errore");
@@ -81,7 +81,7 @@ public class Login{
         }
     }
 
-    private void openMainView(JSONObject mailbox){
+    private void openMainView(String userMail, JSONObject mailbox){
         //nascondo la view, potrebbe essere utile recuperarla con il logout??
         loginSubmit.getScene().getWindow().hide();
         Stage mainViewStage = new Stage();
@@ -93,8 +93,10 @@ public class Login{
             mainViewStage.show();
 
             ClientController controller = loader.getController();
-            ClientModel model = new ClientModel(mailbox);
+            ClientModel model = new ClientModel(userMail, mailbox);
             controller.setModel(model);
+
+
 
         }catch(Exception e){
             System.out.println(e);

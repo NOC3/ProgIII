@@ -1,6 +1,1 @@
-"sent":{
-
-},
-"inbox"{
-
-}
+{"last_inbox_id":3,"last_sent_id":2,"inbox":[{"date":"10-02-2099 14:00","sender":"ciao","recipients":"tu","subject":"prova","id":1,"text":"ciao"},{"date":"10-02-1299 14:00","sender":"ciao","recipients":"tu","subject":"prova","id":2,"text":"ciao"},{"date":"Tue Mar 09 17:03:10 CET 2021","sender":"ciao","recipients":"ciao2, ","subject":"","id":-1,"text":""}],"sent":[{"date":"10-02-1999 14:00","sender":"ciao","recipients":"tu, lui, l'altro","subject":"prova","id":1,"text":"ciao"},{"date":"10-02-1939 15:00","sender":"ciao","recipients":"tu","subject":"prova","id":2,"text":"ciao"}]}

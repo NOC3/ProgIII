@@ -1,5 +1,6 @@
 package Server;
 
+import Common.Email;
 import Common.Message;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -10,26 +11,29 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
 
 public class ServerModel {
-    private Set<String> usersMail; //contains all "registered"/valid user's mail
+    private Map<String, ReentrantReadWriteLock> usersLocks; //contains all "registered"/valid user's mail
+    private Map<String, ArrayList<Integer>> usersMail;
     private Server srv;
     private ObservableList<Log> logs;
 
     public ServerModel() {
         logs = FXCollections.observableArrayList();
-        usersMail = buildUsersMail();
+        buildUsersMail();
+
         srv = new Server();
         srv.start();
     }
 
     //forse meglio set<File> per accessi futuri, es eliminazione/nuova mail
-    public Set<String> buildUsersMail() {
+    public void buildUsersMail() {
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         URL url = loader.getResource("./mails/");
         assert url != null;
@@ -37,16 +41,15 @@ public class ServerModel {
 
         File[] listOfFiles = new File(path).listFiles();
 
-        Set<String> allUsers = new HashSet<>();
+        usersLocks = new HashMap<>();
+        usersMail  = new HashMap<>();
+
         assert listOfFiles != null;
 
-        for (File f : listOfFiles)
-            allUsers.add(f.getName().substring(0, f.getName().length() - 5)); //removing .json
-
-        //debug
-        System.out.println(allUsers);
-
-        return allUsers;
+        for (File f : listOfFiles){
+            usersLocks.put(f.getName().substring(0, f.getName().length() - 5), new ReentrantReadWriteLock()); //removing .json
+            usersMail.put(f.getName().substring(0, f.getName().length() - 5), new ArrayList<>());
+        }
     }
 
     public ObservableList<Log> getLogs() {
@@ -54,7 +57,7 @@ public class ServerModel {
     }
 
     private boolean checkLogin(String user) {
-        return usersMail.contains(user);
+        return usersMail.containsKey(user);
     }
 
     private JSONObject getMailbox(String user) {
@@ -74,7 +77,66 @@ public class ServerModel {
         return obj;
     }
 
+    private String recipientsExist(Email e) {
+        ArrayList<String> rec = e.getRecipients();
+        String recNotFound = "";
+        for (String r : rec) {
+            if (!checkLogin(r))
+                recNotFound += r + ", ";
+        }
+        return recNotFound.equals("") ? "" : recNotFound.substring(0, recNotFound.length() - 2);
+    }
 
+    private int sendEmail(Email e) {
+        int resId = -1;
+
+        ArrayList<String> writeOnUser = e.getRecipients();
+
+        //write on sender
+        resId =  writeOnJson(e, e.getSender(), "sent");
+
+        //write on recipients
+        for (String user : writeOnUser) {
+            writeOnJson(e, user, "inbox");
+            //notifica l'utente
+        }
+
+        return resId;
+    }
+
+    private int writeOnJson(Email e, String user, String key ) {
+        //scrittura
+        Lock wLock = (usersLocks.get(e.getSender())).writeLock();
+        wLock.lock();
+
+        JSONObject json = getMailbox(user);
+
+
+        int lastId = (int)json.opt("last_"+key+"_id");
+        lastId +=1;
+
+        json.put("last_"+key+"_id", lastId);
+
+        e.setID(lastId);
+        ((JSONArray)json.opt(key)).put(e.toJSON());
+
+
+        try {
+            ClassLoader loader = Thread.currentThread().getContextClassLoader();
+            URL url = loader.getResource("./mails/" + user + ".json");
+            assert url != null;
+            String path = url.getPath();
+            FileWriter file = new FileWriter(path);
+            file.write(json.toString());
+            file.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+        wLock.unlock();
+
+        return lastId;
+    }
 
     //classi interne al model di comunicazione
 
@@ -91,14 +153,13 @@ public class ServerModel {
                 serverSocket = new ServerSocket(port);
                 while (true) {
                     Socket incoming = serverSocket.accept();
+
                     execPool.execute(new Request(incoming));
-
-
                 }
             } catch (Exception e) {
                 System.out.println(e.getLocalizedMessage());
             } finally {
-                //serversocket.close()
+                // serverSocket.close();
             }
         }
 
@@ -133,9 +194,27 @@ public class ServerModel {
 
                 switch (message.getOperation()) {
                     case Message.SEND_NEW_EMAIL:
+                        String recipientsNotFound = model.recipientsExist((Email) message.getObj());
+
+                        if (recipientsNotFound.equals("")) {
+                            int id = model.sendEmail((Email) message.getObj());
+                            if (id != -1) {
+                                sendResponse(Message.SUCCESS, id);
+                                model.logs.add(new Log("Email inviata correttamente"));
+                            } else {
+                                sendResponse(Message.ERROR, "Errore nell'invio email");
+                                model.logs.add(new Log("Errore nell'invio mail - cod: " + id));
+                            }
+                        } else {
+                            sendResponse(Message.ERROR, "Recipient not found" + recipientsNotFound);
+                            model.logs.add(new Log("Recipient not found"));
+                        }
+
                         break;
+
                     case Message.REMOVE_EMAIL:
                         break;
+
                     case Message.LOGIN:
                         if (model.checkLogin((String) message.getObj())) {
                             sendResponse(Message.SUCCESS,
@@ -157,7 +236,7 @@ public class ServerModel {
                 }
             }
 
-            private void sendResponse(int status, Object o) {
+            private void sendResponse(short status, Object o) {
                 try {
                     Message m = new Message(status, o);
                     ObjectOutputStream outputRequest = new ObjectOutputStream(clientSocket.getOutputStream());

@@ -2,30 +2,36 @@ package Client;
 
 import Common.*;
 import javafx.beans.property.SimpleListProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableArray;
-import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 public class ClientModel {
+    private String host = "localhost";
+    private final int port = 49152;
 
     private String email;
     private SimpleListProperty<Email> inbox;
     private SimpleListProperty<Email> sent;
 
-    public ClientModel(JSONObject mailbox) {
+    public ClientModel(String email, JSONObject mailbox) {
+        this.email = email;
+
         inbox = new SimpleListProperty<Email>();
         inbox.set(FXCollections.observableArrayList(new ArrayList<Email>()));
         sent = new SimpleListProperty<Email>();
         sent.set(FXCollections.observableArrayList(new ArrayList<Email>()));
 
+
         parseMailbox((JSONArray) mailbox.opt("inbox"), inbox);
         parseMailbox((JSONArray) mailbox.opt("sent"), sent);
+
 
     }
 
@@ -43,10 +49,14 @@ public class ClientModel {
         }
     }
 
+
+
     public Email fromJsonToEmail(JSONObject jo){
+
         Email e =
-                new Email(jo.opt("id"), jo.get("sender"), jo.opt("recipients"),
+                new Email(jo.opt("id"), jo.opt("sender"), jo.opt("recipients"),
                 jo.opt("subject"), jo.opt("text"), jo.opt("date"));
+
         return e;
     }
 
@@ -57,4 +67,48 @@ public class ClientModel {
     public SimpleListProperty<Email> getSent() {
         return sent;
     }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void sendNewEmail(Email e){
+
+        ClientModel.Request send = new ClientModel.Request(Message.SEND_NEW_EMAIL, e);
+        send.start();
+    }
+
+    class Request extends Thread {
+
+        private short operation;
+        private Object object;
+
+        public Request(short op, Object o) {
+            operation = op;
+            object = o;
+        }
+
+        public void run() {
+            Message m = new Message(operation, object);
+            try {
+                Socket socket = new Socket(host, port);
+
+                ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+                out.writeObject(m);
+
+                ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+                Message response = (Message) in.readObject();
+
+                if (response.getOperation() == Message.SUCCESS) {
+                    //switch
+                } else {
+                    //errore scritto nelle notifiche del client
+                }
+            } catch (Exception e) {
+                System.out.println("Errore client " + e);
+
+            }
+        }
+    }
+
 }

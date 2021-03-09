@@ -1,6 +1,7 @@
 package Common;
 
 import javafx.beans.property.SimpleStringProperty;
+import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.text.ParseException;
@@ -8,7 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Email implements Serializable{
+public class Email implements Serializable {
     private int ID;
     private final String sender;
     private final ArrayList<String> recipients;
@@ -26,24 +27,27 @@ public class Email implements Serializable{
     }
 
     public Email(Object id, Object mittente, Object destinatari, Object oggetto, Object testo, Object data) {
-        ID = (int)id;
-        this.sender = (String)mittente;
-        this.recipients = recipientsToList((String)destinatari);
-        this.subject = (String)oggetto;
-        this.text = (String)testo;
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");;
+
+
+        ID = (int) id;
+        this.sender = (String) mittente;
+        this.recipients = recipientsToList((String) destinatari);
+        this.subject = (String) oggetto;
+        this.text = (String) testo;
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        ;
         Date d = null;
         try {
-            d = formatter.parse((String)data);
+            d = formatter.parse((String) data);
         } catch (ParseException e) {
             System.out.println("Formato data non riconosciuto");
-        }finally {
+        } finally {
             this.date = d;
         }
     }
 
 
-    public Date getDate(){
+    public Date getDate() {
         return date;
     }
 
@@ -67,29 +71,29 @@ public class Email implements Serializable{
         return text;
     }
 
-    public void setID(int id){
+    public void setID(int id) {
         ID = id;
     }
 
-    public void print(){
+    public void print() {
         System.out.println(this.toString());
     }
 
     @Override
-    public String toString(){
-        return "Mittente: " + sender + "\nDestinatari: " + recipients +"\nOggetto: "+ subject +"\nTesto: "+ text + "\nData: "+ String.valueOf(date);
+    public String toString() {
+        return "Mittente: " + sender + "\nDestinatari: " + recipients + "\nOggetto: " + subject + "\nTesto: " + text + "\nData: " + String.valueOf(date);
     }
 
-    public SimpleStringProperty mittenteToProperty(){
+    public SimpleStringProperty mittenteToProperty() {
         SimpleStringProperty m = new SimpleStringProperty();
         m.set(sender);
         return m;
     }
 
 
-    public ArrayList<SimpleStringProperty> destinatariToProperty(){
-        ArrayList<SimpleStringProperty> a= new ArrayList<>();
-        for (String dest : recipients){
+    public ArrayList<SimpleStringProperty> destinatariToProperty() {
+        ArrayList<SimpleStringProperty> a = new ArrayList<>();
+        for (String dest : recipients) {
             SimpleStringProperty m = new SimpleStringProperty();
             m.set(dest);
             a.add(m);
@@ -97,37 +101,49 @@ public class Email implements Serializable{
         return a;
     }
 
-    public SimpleStringProperty dateToProperty(){
+    public SimpleStringProperty dateToProperty() {
         SimpleStringProperty m = new SimpleStringProperty();
         m.set(String.valueOf(date));
         return m;
     }
 
-    public SimpleStringProperty oggettoToProperty(){
+    public SimpleStringProperty oggettoToProperty() {
         SimpleStringProperty o = new SimpleStringProperty();
         o.set(subject);
         return o;
     }
 
-    public SimpleStringProperty testoToProperty(){
+    public SimpleStringProperty testoToProperty() {
         SimpleStringProperty t = new SimpleStringProperty();
         t.set(text);
         return t;
     }
 
-    public ArrayList<String> recipientsToList(String s){
+    public ArrayList<String> recipientsToList(String s) {
         ArrayList<String> al = new ArrayList<>();
-        for(String st : s.split(",")){
+        for (String st : s.split(",")) {
             al.add(st);
         }
         return al;
     }
 
-    public String recipientsToJSON(ArrayList<String> list){
-        String res="";
-        for(String elem : list){
-            res+=elem;
+    public String recipientsToString() {
+        ArrayList<String> rec = getRecipients();
+        String recStr = "";
+        for (String r : rec) {
+            recStr += r + ", ";
         }
-        return res;
+        return recStr;
+    }
+
+    public JSONObject toJSON() {
+        JSONObject json = new JSONObject();
+        json.put("id", this.ID);
+        json.put("sender", this.sender);
+        json.put("recipients", this.recipientsToString());
+        json.put("subject", this.subject);
+        json.put("text", this.text);
+        json.put("date", this.date);
+        return json;
     }
 }

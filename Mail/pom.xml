@@ -33,7 +33,6 @@
             <version>15.0.1</version>
         </dependency>
 
-
         <!-- https://mvnrepository.com/artifact/org.json/json -->
         <!-- Libreria gestione file json -->
         <dependency>

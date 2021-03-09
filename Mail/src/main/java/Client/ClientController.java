@@ -2,16 +2,20 @@ package Client;
 
 
 import Common.Email;
-import javafx.beans.property.SimpleObjectProperty;
+import Common.Message;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
-import javafx.scene.control.ListView;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.text.Text;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+
+
+import java.util.Calendar;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ClientController {
 
@@ -58,9 +62,19 @@ public class ClientController {
     @FXML
     private Text inboxDataText;
 
+    @FXML
+    private Button sendNewEmail;
+
+    @FXML
+    private TextField recipientsNewEmail;
+    @FXML
+    private TextField subjectNewEmail;
+    @FXML
+    private TextArea textNewEmail;
+
 
     public void setModel(ClientModel m) {
-        model = m;
+        this.model = m;
         inboxDateColumn.setCellValueFactory(email
                 -> new SimpleStringProperty((email.getValue().getDate()).toString()));
 
@@ -88,6 +102,7 @@ public class ClientController {
                 (observable, oldValue, newValue) -> showInboxEmailDetails(newValue));
         sentList.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> showSentEmailDetails(newValue));
+
     }
 
 
@@ -118,4 +133,35 @@ public class ClientController {
             inboxDataText.setText("");
         }
     }
+
+
+    @FXML
+    private void sendNewEmail() {
+
+        String[] destinatari = (recipientsNewEmail.getText()).split(",");
+        ArrayList<String> rec = new ArrayList<>();
+        for (String dest : destinatari) {
+            rec.add(dest);
+        }
+
+
+        String subject = subjectNewEmail.getText();
+        String text = textNewEmail.getText();
+        Date data = new Date();
+
+
+        Email e = new Email(-1, this.model.getEmail(), rec, subject, text, data);
+        model.sendNewEmail(e);
+
+
+    }
+
+
+
+    private boolean validateEmailAddress(String email) {
+        Pattern pattern = Pattern.compile("^.+@.+\\..+$");
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
+    }
+
 }
