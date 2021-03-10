@@ -42,11 +42,11 @@ public class ServerModel {
         File[] listOfFiles = new File(path).listFiles();
 
         usersLocks = new HashMap<>();
-        usersMail  = new HashMap<>();
+        usersMail = new HashMap<>();
 
         assert listOfFiles != null;
 
-        for (File f : listOfFiles){
+        for (File f : listOfFiles) {
             usersLocks.put(f.getName().substring(0, f.getName().length() - 5), new ReentrantReadWriteLock()); //removing .json
             usersMail.put(f.getName().substring(0, f.getName().length() - 5), new ArrayList<>());
         }
@@ -93,7 +93,7 @@ public class ServerModel {
         ArrayList<String> writeOnUser = e.getRecipients();
 
         //write on sender
-        resId =  writeOnJson(e, e.getSender(), "sent");
+        resId = writeOnJson(e, e.getSender(), "sent");
 
         //write on recipients
         for (String user : writeOnUser) {
@@ -104,7 +104,43 @@ public class ServerModel {
         return resId;
     }
 
-    private int writeOnJson(Email e, String user, String key ) {
+    private boolean deleteOnJson(Email e, String user, String key) {
+        //scrittura
+        Lock wLock = (usersLocks.get(e.getSender())).writeLock();
+        wLock.lock();
+        boolean found = false;
+
+        JSONObject json = getMailbox(user);
+
+        //json.toString().replace(e.toJSON().toString(), "");
+
+        for (int i = 0; i < ((JSONArray) json.opt(key)).length(); i++) {
+            if (((JSONObject) ((JSONArray) json.opt(key)).get(i)).getInt("id") == e.getID()) {
+                ((JSONArray) json.opt(key)).remove(i);
+                found = true;
+                break;
+            }
+        }
+
+        try {
+            ClassLoader loader = Thread.currentThread().getContextClassLoader();
+            URL url = loader.getResource("./mails/" + user + ".json");
+            assert url != null;
+            String path = url.getPath();
+            FileWriter file = new FileWriter(path);
+            file.write(json.toString());
+            file.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+        wLock.unlock();
+
+        return found;
+    }
+
+
+    private int writeOnJson(Email e, String user, String key) {
         //scrittura
         Lock wLock = (usersLocks.get(e.getSender())).writeLock();
         wLock.lock();
@@ -112,14 +148,13 @@ public class ServerModel {
         JSONObject json = getMailbox(user);
 
 
-        int lastId = (int)json.opt("last_"+key+"_id");
-        lastId +=1;
+        int lastId = (int) json.opt("last_" + key + "_id");
+        lastId += 1;
 
-        json.put("last_"+key+"_id", lastId);
+        json.put("last_" + key + "_id", lastId);
 
         e.setID(lastId);
-        ((JSONArray)json.opt(key)).put(e.toJSON());
-
+        ((JSONArray) json.opt(key)).put(e.toJSON());
 
         try {
             ClassLoader loader = Thread.currentThread().getContextClassLoader();
@@ -212,9 +247,29 @@ public class ServerModel {
 
                         break;
 
-                    case Message.REMOVE_EMAIL:
-                        break;
+                    case Message.REMOVE_EMAIL_INBOX:
+                        if (deleteOnJson((Email) message.getObj(), ((Email) message.getObj()).getSender(), "inbox")) {
+                            sendResponse(Message.SUCCESS, "Mail eliminata correttamente ");
+                            model.logs.add(new Log("Mail eliminata correttamente "+ (((Email) message.getObj()).getSender())));
+                        } else {
+                            sendResponse(Message.ERROR, "Errore eliminazione mail");
+                            model.logs.add(new Log("Mail eliminata correttamente "+ (((Email) message.getObj()).getSender())));
 
+                        }
+                        break;
+                    case Message.REMOVE_EMAIL_SENT:
+
+                        if (deleteOnJson((Email) message.getObj(), ((Email) message.getObj()).getSender(), "sent")) {
+                            sendResponse(Message.SUCCESS, "Mail eliminata correttamente");
+                            model.logs.add(new Log("Mail eliminata correttamente "+ (((Email) message.getObj()).getSender())));
+
+                        } else {
+                            sendResponse(Message.ERROR, "Errore eliminazione mail");
+                            model.logs.add(new Log("Errore eliminazione mail "+ (((Email) message.getObj()).getSender())));
+                        }
+
+
+                        break;
                     case Message.LOGIN:
                         if (model.checkLogin((String) message.getObj())) {
                             sendResponse(Message.SUCCESS,

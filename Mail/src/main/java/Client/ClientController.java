@@ -8,11 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.text.Text;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-
-
-import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,6 +16,9 @@ import java.util.regex.Pattern;
 public class ClientController {
 
     ClientModel model;
+
+    @FXML
+    private TabPane topPane;
 
     @FXML
     private Tab inbox;
@@ -64,6 +63,10 @@ public class ClientController {
 
     @FXML
     private Button sendNewEmail;
+    @FXML
+    private Button deleteEmailInbox;
+    @FXML
+    private Button deleteEmailSent;
 
     @FXML
     private TextField recipientsNewEmail;
@@ -137,7 +140,6 @@ public class ClientController {
 
     @FXML
     private void sendNewEmail() {
-
         String[] destinatari = (recipientsNewEmail.getText()).split(",");
         ArrayList<String> rec = new ArrayList<>();
         for (String dest : destinatari) {
@@ -147,17 +149,26 @@ public class ClientController {
 
         String subject = subjectNewEmail.getText();
         String text = textNewEmail.getText();
+
+
         Date data = new Date();
-
-
         Email e = new Email(-1, this.model.getEmail(), rec, subject, text, data);
         model.sendNewEmail(e);
+    }
 
-
+    @FXML
+    private void deleteEmail() {
+        if (topPane.getSelectionModel().getSelectedItem().getId().equals("sent")) {
+            Email e = sentList.getSelectionModel().getSelectedItem();
+            model.deleteEmail(e, Message.REMOVE_EMAIL_SENT);
+        } else if (topPane.getSelectionModel().getSelectedItem().getId().equals("inbox")) {
+            Email e = inboxList.getSelectionModel().getSelectedItem();
+            model.deleteEmail(e, Message.REMOVE_EMAIL_INBOX);
+        }
     }
 
 
-
+    //to try
     private boolean validateEmailAddress(String email) {
         Pattern pattern = Pattern.compile("^.+@.+\\..+$");
         Matcher matcher = pattern.matcher(email);

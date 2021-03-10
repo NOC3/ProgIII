@@ -3,13 +3,16 @@ package Common;
 import javafx.beans.property.SimpleStringProperty;
 import org.json.JSONObject;
 
+import javax.xml.crypto.Data;
 import java.io.Serializable;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
 
-public class Email implements Serializable {
+public class Email implements Serializable{
     private int ID;
     private final String sender;
     private final ArrayList<String> recipients;
@@ -34,11 +37,12 @@ public class Email implements Serializable {
         this.recipients = recipientsToList((String) destinatari);
         this.subject = (String) oggetto;
         this.text = (String) testo;
+
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-        ;
+
         Date d = null;
         try {
-            d = formatter.parse((String) data);
+            d = formatter.parse((String)data);
         } catch (ParseException e) {
             System.out.println("Formato data non riconosciuto");
         } finally {
@@ -143,7 +147,18 @@ public class Email implements Serializable {
         json.put("recipients", this.recipientsToString());
         json.put("subject", this.subject);
         json.put("text", this.text);
-        json.put("date", this.date);
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        String data = formatter.format(this.date);
+        json.put("date", data);
         return json;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(o instanceof Email){
+            return this.ID==((Email) o).getID();
+        }else{
+            return false;
+        }
     }
 }

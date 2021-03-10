@@ -15,7 +15,7 @@
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Client.ClientController">
     <children>
-        <TabPane prefHeight="400.0" prefWidth="465.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <TabPane fx:id="topPane" prefHeight="400.0" prefWidth="465.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <tabs>
                 <Tab fx:id="inbox" text="Ricevuti">
                <content>
@@ -34,13 +34,17 @@
                         </AnchorPane>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                            <children>
-                              <Text layoutX="14.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Mittente" />
-                              <Text layoutX="14.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Data" />
-                              <Text fx:id="inboxSenderText" layoutX="112.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" />
-                              <Text fx:id="inboxDataText" layoutX="112.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" text="" />
-                              <Text layoutX="15.0" layoutY="67.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Oggetto" />
-                              <Text fx:id="inboxSubjectText" layoutX="112.0" layoutY="67.0" strokeType="OUTSIDE" strokeWidth="0.0" text="" />
-                              <Text fx:id="inboxTextText" layoutX="15.0" layoutY="93.0" strokeType="OUTSIDE" strokeWidth="0.0" text="" wrappingWidth="443.7294921875" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="80.0" />
+                              <Text layoutX="14.0" layoutY="54.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Mittente" />
+                              <Text layoutX="14.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Data" />
+                              <Text fx:id="inboxSenderText" layoutX="112.0" layoutY="54.0" strokeType="OUTSIDE" strokeWidth="0.0" />
+                              <Text fx:id="inboxDataText" layoutX="112.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0" text="" />
+                              <Text layoutX="15.0" layoutY="94.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Oggetto" />
+                              <Text fx:id="inboxSubjectText" layoutX="112.0" layoutY="94.0" strokeType="OUTSIDE" strokeWidth="0.0" text="" />
+                              <Text fx:id="inboxTextText" layoutX="15.0" layoutY="111.06689453125" strokeType="OUTSIDE" strokeWidth="0.0" text="" wrappingWidth="443.7294921875" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="141.2705078125" AnchorPane.topAnchor="99.0" />
+                              <Button fx:id="deleteEmailInbox" onAction="#deleteEmail" layoutX="16.0" layoutY="10.0" mnemonicParsing="false" text="Elimina" />
+                              <Button layoutX="92.0" layoutY="10.0" mnemonicParsing="false" text="Rispondi" />
+                              <Button layoutX="175.0" layoutY="10.0" mnemonicParsing="false" text="Rispondi a tutti" />
+                              <Button layoutX="300.0" layoutY="10.0" mnemonicParsing="false" text="Inoltra" />
                            </children></AnchorPane>
                     </items>
                   </SplitPane>
@@ -63,13 +67,17 @@
                             </AnchorPane>
                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                            <children>
-                              <Text layoutX="14.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Destinatari" />
-                              <Text layoutX="14.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Data" />
-                              <Text layoutX="15.0" layoutY="67.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Oggetto" />
-                              <Text fx:id="sentSubjectText" layoutX="112.0" layoutY="67.0" strokeType="OUTSIDE" strokeWidth="0.0" text="" />
-                              <Text fx:id="sentTextText" layoutX="15.0" layoutY="93.0" strokeType="OUTSIDE" strokeWidth="0.0" text="" wrappingWidth="443.7294921875" />
-                              <Text fx:id="sentRecipientsText" layoutX="112.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="" />
-                              <Text fx:id="sentDataText" layoutX="112.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" text="" />
+                              <Text layoutX="14.0" layoutY="54.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Destinatari" />
+                              <Text layoutX="14.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Data" />
+                              <Text layoutX="15.0" layoutY="94.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Oggetto" />
+                              <Text fx:id="sentSubjectText" layoutX="112.0" layoutY="94.0" strokeType="OUTSIDE" strokeWidth="0.0" text="" />
+                              <Text fx:id="sentTextText" layoutX="15.0" layoutY="120.0" strokeType="OUTSIDE" strokeWidth="0.0" text="" wrappingWidth="443.7294921875" />
+                              <Text fx:id="sentRecipientsText" layoutX="112.0" layoutY="54.0" strokeType="OUTSIDE" strokeWidth="0.0" text="" />
+                              <Text fx:id="sentDataText" layoutX="112.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0" text="" />
+                              <Button fx:id="deleteEmailSent" onAction="#deleteEmail" layoutX="16.0" layoutY="10.0" mnemonicParsing="false" text="Elimina" />
+                              <Button layoutX="92.0" layoutY="10.0" mnemonicParsing="false" text="Rispondi" />
+                              <Button layoutX="175.0" layoutY="10.0" mnemonicParsing="false" text="Rispondi a tutti" />
+                              <Button layoutX="300.0" layoutY="10.0" mnemonicParsing="false" text="Inoltra" />
                            </children></AnchorPane>
                         </items>
                     </SplitPane>
@@ -82,7 +90,7 @@
                                 <TextField fx:id="recipientsNewEmail" layoutX="14.0" layoutY="14.0" prefHeight="26.0" prefWidth="437.0" promptText="Destinatari" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0" />
                                 <TextField fx:id="subjectNewEmail" layoutX="14.0" layoutY="51.0" prefHeight="26.0" prefWidth="437.0" promptText="Oggetto" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="50.0" />
                                 <TextArea fx:id="textNewEmail" layoutX="14.0" layoutY="87.0" prefHeight="220.0" prefWidth="438.0" promptText="Scrivi qua" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="87.0" />
-                                <Button fx:id="sendNewEmail" onAction="#sendNewEmail" alignment="CENTER" layoutX="275.0" layoutY="321.0" maxHeight="26.0" maxWidth="50.0" minHeight="26.0" minWidth="50.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="50.0" text="Invia" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="275.0" AnchorPane.rightAnchor="275.0" />
+                                <Button fx:id="sendNewEmail" alignment="CENTER" layoutX="275.0" layoutY="321.0" maxHeight="26.0" maxWidth="50.0" minHeight="26.0" minWidth="50.0" mnemonicParsing="false" onAction="#sendNewEmail" prefHeight="26.0" prefWidth="50.0" text="Invia" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="275.0" AnchorPane.rightAnchor="275.0" />
                             </children>
                         </AnchorPane>
                     </content>
