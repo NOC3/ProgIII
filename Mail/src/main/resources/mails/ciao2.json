@@ -1,41 +1,9 @@
 {
   "last_inbox_id" : 2,
   "inbox": [
-    {
-      "id": 1,
-      "sender": "ciao",
-      "recipients": "tu",
-      "subject": "prova",
-      "text": "ciao",
-      "date": "10-02-2099 14:00"
-    },
-    {
-      "id": 2,
-      "sender": "ciao",
-      "recipients": "tu",
-      "subject": "prova",
-      "text": "ciao",
-      "date": "10-02-1299 14:00"
-    }
   ],
 
   "last_sent_id": 2,
   "sent": [
-    {
-      "id": 1,
-      "sender": "ciao",
-      "recipients": "tu, lui, l'altro",
-      "subject": "prova",
-      "text": "ciao",
-      "date": "10-02-1999 14:00"
-    },
-    {
-      "id": 2,
-      "sender": "ciao",
-      "recipients": "tu",
-      "subject": "prova",
-      "text": "ciao",
-      "date": "10-02-1939 15:00"
-    }
   ]
 }

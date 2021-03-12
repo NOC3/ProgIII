@@ -4,6 +4,7 @@ import Common.*;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
+import javafx.util.Pair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -79,7 +80,8 @@ public class ClientModel {
 
     public void deleteEmail(Email e, short op) {
         System.out.println(e);
-        Request r = new Request(op, e);
+        Pair<Email, String> p = new Pair<>(e, email);
+        Request r = new Request(op, p);
         r.start();
     }
 
@@ -113,10 +115,10 @@ public class ClientModel {
                 if (response.getOperation() == Message.SUCCESS) {
                     switch (this.operation) {
                         case Message.REMOVE_EMAIL_INBOX:
-                            deleteEmailFromList(inbox, (Email)object);
+                            deleteEmailFromList(inbox, (Email)((Pair)object).getKey());
                             break;
                         case Message.REMOVE_EMAIL_SENT:
-                            deleteEmailFromList(sent, (Email)object);
+                            deleteEmailFromList(sent, (Email)((Pair)object).getKey());
                             break;
                         default:
                             break;

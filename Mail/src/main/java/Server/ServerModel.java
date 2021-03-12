@@ -4,6 +4,7 @@ import Common.Email;
 import Common.Message;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.util.Pair;
 import org.json.*;
 
 import java.io.*;
@@ -113,8 +114,10 @@ public class ServerModel {
         JSONObject json = getMailbox(user);
 
         //json.toString().replace(e.toJSON().toString(), "");
-
+        System.out.println((JSONArray) json.opt(key) + "\n" + ((JSONArray) json.opt(key)).length());
         for (int i = 0; i < ((JSONArray) json.opt(key)).length(); i++) {
+            System.out.println(((JSONObject) ((JSONArray) json.opt(key)).get(i)).getInt("id")+" | "+e.getID());
+
             if (((JSONObject) ((JSONArray) json.opt(key)).get(i)).getInt("id") == e.getID()) {
                 ((JSONArray) json.opt(key)).remove(i);
                 found = true;
@@ -248,24 +251,23 @@ public class ServerModel {
                         break;
 
                     case Message.REMOVE_EMAIL_INBOX:
-                        if (deleteOnJson((Email) message.getObj(), ((Email) message.getObj()).getSender(), "inbox")) {
+                        if (deleteOnJson((Email)((Pair) message.getObj()).getKey(), (String)((Pair) message.getObj()).getValue(), "inbox")) {
                             sendResponse(Message.SUCCESS, "Mail eliminata correttamente ");
-                            model.logs.add(new Log("Mail eliminata correttamente "+ (((Email) message.getObj()).getSender())));
+                            model.logs.add(new Log("Mail eliminata correttamente "+ ((String)((Pair) message.getObj()).getValue())));
                         } else {
                             sendResponse(Message.ERROR, "Errore eliminazione mail");
-                            model.logs.add(new Log("Mail eliminata correttamente "+ (((Email) message.getObj()).getSender())));
+                            model.logs.add(new Log("Errore eliminazione mail "+ ((String)((Pair) message.getObj()).getValue())));
 
                         }
                         break;
                     case Message.REMOVE_EMAIL_SENT:
-
-                        if (deleteOnJson((Email) message.getObj(), ((Email) message.getObj()).getSender(), "sent")) {
+                        if (deleteOnJson((Email)((Pair) message.getObj()).getKey(), (String)((Pair) message.getObj()).getValue(), "sent")) {
                             sendResponse(Message.SUCCESS, "Mail eliminata correttamente");
-                            model.logs.add(new Log("Mail eliminata correttamente "+ (((Email) message.getObj()).getSender())));
+                            model.logs.add(new Log("Mail eliminata correttamente "+ ((String)((Pair) message.getObj()).getValue())));
 
                         } else {
                             sendResponse(Message.ERROR, "Errore eliminazione mail");
-                            model.logs.add(new Log("Errore eliminazione mail "+ (((Email) message.getObj()).getSender())));
+                            model.logs.add(new Log("Errore eliminazione mail "+ ((String)((Pair) message.getObj()).getValue())));
                         }
 
 
