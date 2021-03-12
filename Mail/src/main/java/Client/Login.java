@@ -86,9 +86,9 @@ public class Login{
         loginSubmit.getScene().getWindow().hide();
         Stage mainViewStage = new Stage();
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/clientMainView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/clientApp.fxml"));
             Parent root = loader.load();
-            mainViewStage.setTitle("Main");
+            mainViewStage.setTitle("Email App");
             mainViewStage.setScene(new Scene(root));
             mainViewStage.show();
 

@@ -7,6 +7,7 @@ import javafx.util.Pair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -32,8 +33,9 @@ public class ClientModel {
         parseMailbox((JSONArray) mailbox.opt("inbox"), inbox);
         parseMailbox((JSONArray) mailbox.opt("sent"), sent);
 
-        //Request dm = new Request(Message.CHECK_NEW , this.email);
-
+        Request dm = new Request(Message.CHECK_NEW, this.email);
+        dm.setDaemon(true);
+        dm.start();
     }
 
 
@@ -80,10 +82,9 @@ public class ClientModel {
         r.start();
     }
 
-    public void deleteEmailFromList(SimpleListProperty<Email> list, Email e){
+    public void deleteEmailFromList(SimpleListProperty<Email> list, Email e) {
         list.remove(e);
     }
-
 
 
     class Request extends Thread {
@@ -96,32 +97,63 @@ public class ClientModel {
             object = o;
         }
 
+        private Message communicateToServer(Message toSend) throws IOException, ClassNotFoundException {
+            Socket socket = null;
+            socket = new Socket(host, port);
+
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            out.writeObject(toSend);
+
+            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+            return (Message) in.readObject();
+        }
+
         public void run() {
             Message m = new Message(operation, object);
-            try {
-                Socket socket = new Socket(host, port);
+            Message response = null;
 
-                ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-                out.writeObject(m);
+            //op that gets a "special treatment"
+            if (operation == Message.CHECK_NEW) {
+                while (true) {
+                    try {
+                        Thread.sleep(10000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
 
-                ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-                Message response = (Message) in.readObject();
+                    try {
+                        response = communicateToServer(m);
+                    } catch (IOException | ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
 
+                    assert response != null;
+                    if (response.getOperation() == Message.SUCCESS) {
+                        JSONObject js = new JSONObject((String) response.getObj());
+                        parseMailbox((JSONArray) js.opt("new"), inbox);
+                    }
+                }
+            } else { //si può togliere dato il while true
+
+                try {
+                    response = communicateToServer(m);
+                } catch (IOException | ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+                assert response != null;
                 if (response.getOperation() == Message.SUCCESS) {
                     switch (this.operation) {
                         case Message.REMOVE_EMAIL_INBOX:
-                            deleteEmailFromList(inbox, (Email)((Pair)object).getKey());
+                            deleteEmailFromList(inbox, (Email) ((Pair) object).getKey());
                             break;
                         case Message.REMOVE_EMAIL_SENT:
-                            deleteEmailFromList(sent, (Email)((Pair)object).getKey());
+                            deleteEmailFromList(sent, (Email) ((Pair) object).getKey());
                             break;
                         case Message.SEND_NEW_EMAIL:
                             Email ne = (Email) object;
-                            ne.setID((int)response.getObj());
+                            ne.setID((int) response.getObj());
                             sent.add(0, ne);
-                            break;
-                        case Message.CHECK_NEW:
-                            parseMailbox((JSONArray) response.getObj(), inbox);
                             break;
                         default:
                             break;
@@ -129,12 +161,7 @@ public class ClientModel {
                 } else {
                     //errore scritto nelle notifiche del client
                 }
-            } catch (Exception e) {
-                System.out.println("Errore client " + e);
-
             }
         }
     }
-
-
 }

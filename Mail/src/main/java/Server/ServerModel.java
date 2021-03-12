@@ -180,29 +180,29 @@ public class ServerModel {
         return !usersMail.get(user).isEmpty();
     }
 
-    private JSONArray getNewEmails(String user){
+    private JSONObject getNewEmails(String user){
         JSONArray res = new JSONArray();
+        JSONObject js = new JSONObject();
 
         Lock rLock = (usersLocks.get(user)).readLock();
         rLock.lock();
 
         JSONArray json = (JSONArray) getMailbox(user).opt("inbox");
-        ArrayList idList = usersMail.get(user);
+        ArrayList<Integer> idList = usersMail.get(user);
         for (int i = json.length()-1; !idList.isEmpty() ; i--) {
             System.out.println("");
-            System.out.println(idList+" | "+ (((JSONObject) json.get(i)).getInt("id")));
 
             if (idList.contains((((JSONObject) json.get(i)).getInt("id")))){
                 idList.remove((Object)(((JSONObject) json.get(i)).getInt("id")));
-                res.put((((JSONObject) json.get(i)).getInt("id")));
+                res.put(json.get(i));
                 System.out.println("trovato");
             }
-            System.out.println("Dopo "+idList+" | "+ (((JSONObject) json.get(i)).getInt("id")));
-
 
         }
+        System.out.println("Json da mandare: " + res);
         rLock.unlock();
-        return res;
+        js.put("new", res);
+        return js;
     }
 
 
@@ -318,7 +318,7 @@ public class ServerModel {
                         break;
                     case Message.CHECK_NEW:
                         if (checkNewEmail((String)message.getObj())) {
-                            sendResponse(Message.SUCCESS, getNewEmails((String)message.getObj()));
+                            sendResponse(Message.SUCCESS, getNewEmails((String)message.getObj()).toString());
                             model.logs.add(0, new Log("Richiesta nuove email" + (String)message.getObj()));
                         } else {
                             sendResponse(Message.ERROR, "No nuove email");
