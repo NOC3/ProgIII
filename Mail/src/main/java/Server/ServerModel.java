@@ -30,6 +30,7 @@ public class ServerModel {
         buildUsersMail();
 
         srv = new Server();
+        srv.setDaemon(true);
         srv.start();
     }
 
