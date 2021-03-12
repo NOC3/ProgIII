@@ -3,7 +3,6 @@ package Client;
 import Common.*;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
-import javafx.geometry.Pos;
 import javafx.util.Pair;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -33,20 +32,17 @@ public class ClientModel {
         parseMailbox((JSONArray) mailbox.opt("inbox"), inbox);
         parseMailbox((JSONArray) mailbox.opt("sent"), sent);
 
+        Request dm = new Request(Message.CHECK_NEW , this.email);
 
     }
 
-    /*    public void initModel(ArrayList<Email> inbox) {
-            this.inbox = new SimpleListProperty<Email>();
-            this.inbox.set(FXCollections.observableArrayList(inbox));
-        }
-    */
+
     public void parseMailbox(JSONArray array, SimpleListProperty<Email> list) {
         // Iterator i = array.iterator();
         JSONObject email = null;
         for (int i = 0; (email = (JSONObject) array.opt(i)) != null; i++) {
             Email e = fromJsonToEmail(email);
-            list.add(e);
+            list.add(0, e);
         }
     }
 
@@ -73,7 +69,6 @@ public class ClientModel {
     }
 
     public void sendNewEmail(Email e) {
-
         ClientModel.Request send = new ClientModel.Request(Message.SEND_NEW_EMAIL, e);
         send.start();
     }
@@ -120,6 +115,12 @@ public class ClientModel {
                         case Message.REMOVE_EMAIL_SENT:
                             deleteEmailFromList(sent, (Email)((Pair)object).getKey());
                             break;
+                        case Message.SEND_NEW_EMAIL:
+                            sent.add(0, (Email)((Pair)object).getKey());
+                            break;
+                        case Message.CHECK_NEW:
+                            parseMailbox((JSONArray) response.getObj(), inbox);
+                            break;
                         default:
                             break;
                     }
@@ -132,5 +133,6 @@ public class ClientModel {
             }
         }
     }
+
 
 }

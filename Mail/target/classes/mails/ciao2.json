@@ -1,1 +1,9 @@
-{"last_inbox_id":5,"last_sent_id":2,"inbox":[],"sent":[]}
+{
+  "last_inbox_id" : 2,
+  "inbox": [
+  ],
+
+  "last_sent_id": 2,
+  "sent": [
+  ]
+}

@@ -98,8 +98,8 @@ public class ServerModel {
 
         //write on recipients
         for (String user : writeOnUser) {
-            writeOnJson(e, user, "inbox");
-            //notifica l'utente
+            Integer id = writeOnJson(e, user, "inbox");
+            usersMail.get(user).add(id);
         }
 
         return resId;
@@ -116,7 +116,7 @@ public class ServerModel {
         //json.toString().replace(e.toJSON().toString(), "");
         System.out.println((JSONArray) json.opt(key) + "\n" + ((JSONArray) json.opt(key)).length());
         for (int i = 0; i < ((JSONArray) json.opt(key)).length(); i++) {
-            System.out.println(((JSONObject) ((JSONArray) json.opt(key)).get(i)).getInt("id")+" | "+e.getID());
+            System.out.println(((JSONObject) ((JSONArray) json.opt(key)).get(i)).getInt("id") + " | " + e.getID());
 
             if (((JSONObject) ((JSONArray) json.opt(key)).get(i)).getInt("id") == e.getID()) {
                 ((JSONArray) json.opt(key)).remove(i);
@@ -175,6 +175,37 @@ public class ServerModel {
 
         return lastId;
     }
+
+    private boolean checkNewEmail(String user){
+        return !usersMail.get(user).isEmpty();
+    }
+
+    private JSONArray getNewEmails(String user){
+        JSONArray res = new JSONArray();
+
+        Lock rLock = (usersLocks.get(user)).readLock();
+        rLock.lock();
+
+        JSONArray json = (JSONArray) getMailbox(user).opt("inbox");
+        ArrayList idList = usersMail.get(user);
+        for (int i = json.length()-1; !idList.isEmpty() ; i--) {
+            System.out.println("");
+            System.out.println(idList+" | "+ (((JSONObject) json.get(i)).getInt("id")));
+
+            if (idList.contains((((JSONObject) json.get(i)).getInt("id")))){
+                idList.remove((Object)(((JSONObject) json.get(i)).getInt("id")));
+                res.put((((JSONObject) json.get(i)).getInt("id")));
+                System.out.println("trovato");
+            }
+            System.out.println("Dopo "+idList+" | "+ (((JSONObject) json.get(i)).getInt("id")));
+
+
+        }
+        rLock.unlock();
+        return res;
+    }
+
+
 
     //classi interne al model di comunicazione
 
@@ -238,36 +269,36 @@ public class ServerModel {
                             int id = model.sendEmail((Email) message.getObj());
                             if (id != -1) {
                                 sendResponse(Message.SUCCESS, id);
-                                model.logs.add(new Log("Email inviata correttamente"));
+                                model.logs.add(0, new Log("Email inviata correttamente"));
                             } else {
                                 sendResponse(Message.ERROR, "Errore nell'invio email");
-                                model.logs.add(new Log("Errore nell'invio mail - cod: " + id));
+                                model.logs.add(0, new Log("Errore nell'invio mail - cod: " + id));
                             }
                         } else {
                             sendResponse(Message.ERROR, "Recipient not found" + recipientsNotFound);
-                            model.logs.add(new Log("Recipient not found"));
+                            model.logs.add(0, new Log("Recipient not found"));
                         }
 
                         break;
 
                     case Message.REMOVE_EMAIL_INBOX:
-                        if (deleteOnJson((Email)((Pair) message.getObj()).getKey(), (String)((Pair) message.getObj()).getValue(), "inbox")) {
+                        if (deleteOnJson((Email) ((Pair) message.getObj()).getKey(), (String) ((Pair) message.getObj()).getValue(), "inbox")) {
                             sendResponse(Message.SUCCESS, "Mail eliminata correttamente ");
-                            model.logs.add(new Log("Mail eliminata correttamente "+ ((String)((Pair) message.getObj()).getValue())));
+                            model.logs.add(0, new Log("Mail eliminata correttamente " + ((String) ((Pair) message.getObj()).getValue())));
                         } else {
                             sendResponse(Message.ERROR, "Errore eliminazione mail");
-                            model.logs.add(new Log("Errore eliminazione mail "+ ((String)((Pair) message.getObj()).getValue())));
+                            model.logs.add(0, new Log("Errore eliminazione mail " + ((String) ((Pair) message.getObj()).getValue())));
 
                         }
                         break;
                     case Message.REMOVE_EMAIL_SENT:
-                        if (deleteOnJson((Email)((Pair) message.getObj()).getKey(), (String)((Pair) message.getObj()).getValue(), "sent")) {
+                        if (deleteOnJson((Email) ((Pair) message.getObj()).getKey(), (String) ((Pair) message.getObj()).getValue(), "sent")) {
                             sendResponse(Message.SUCCESS, "Mail eliminata correttamente");
-                            model.logs.add(new Log("Mail eliminata correttamente "+ ((String)((Pair) message.getObj()).getValue())));
+                            model.logs.add(0, new Log("Mail eliminata correttamente " + ((String) ((Pair) message.getObj()).getValue())));
 
                         } else {
                             sendResponse(Message.ERROR, "Errore eliminazione mail");
-                            model.logs.add(new Log("Errore eliminazione mail "+ ((String)((Pair) message.getObj()).getValue())));
+                            model.logs.add(0, new Log("Errore eliminazione mail " + ((String) ((Pair) message.getObj()).getValue())));
                         }
 
 
@@ -277,17 +308,24 @@ public class ServerModel {
                             sendResponse(Message.SUCCESS,
                                     (model.getMailbox((String) message.getObj()).toString())
                             );
-                            model.logs.add(new Log("Login success from: " + ((String) message.getObj())));
+                            model.logs.add(0, new Log("Login success from: " + ((String) message.getObj())));
                         } else {
                             sendResponse(Message.ERROR,
                                     "User not found"
                             );
-                            model.logs.add(new Log("Login fail from: " + ((String) message.getObj())));
+                            model.logs.add(0, new Log("Login fail from: " + ((String) message.getObj())));
+                        }
+                        break;
+                    case Message.CHECK_NEW:
+                        if (checkNewEmail((String)message.getObj())) {
+                            sendResponse(Message.SUCCESS, getNewEmails((String)message.getObj()));
+                            model.logs.add(0, new Log("Richiesta nuove email" + (String)message.getObj()));
+                        } else {
+                            sendResponse(Message.ERROR, "No nuove email");
+                            model.logs.add(0, new Log("No nuove email" + (String)message.getObj()));
                         }
 
-
                         break;
-
                     default:
                         break;
                 }
