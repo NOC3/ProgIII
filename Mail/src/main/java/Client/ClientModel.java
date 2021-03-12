@@ -32,7 +32,7 @@ public class ClientModel {
         parseMailbox((JSONArray) mailbox.opt("inbox"), inbox);
         parseMailbox((JSONArray) mailbox.opt("sent"), sent);
 
-        Request dm = new Request(Message.CHECK_NEW , this.email);
+        //Request dm = new Request(Message.CHECK_NEW , this.email);
 
     }
 
@@ -116,7 +116,9 @@ public class ClientModel {
                             deleteEmailFromList(sent, (Email)((Pair)object).getKey());
                             break;
                         case Message.SEND_NEW_EMAIL:
-                            sent.add(0, (Email)((Pair)object).getKey());
+                            Email ne = (Email) object;
+                            ne.setID((int)response.getObj());
+                            sent.add(0, ne);
                             break;
                         case Message.CHECK_NEW:
                             parseMailbox((JSONArray) response.getObj(), inbox);
