@@ -45,13 +45,15 @@ public class ClientModel {
     }
 
 
-    public void parseMailbox(JSONArray array, SimpleListProperty<Email> list) {
+    public int parseMailbox(JSONArray array, SimpleListProperty<Email> list) {
         // Iterator i = array.iterator();
         JSONObject email = null;
-        for (int i = 0; (email = (JSONObject) array.opt(i)) != null; i++) {
+        int i;
+        for (i = 0; (email = (JSONObject) array.opt(i)) != null; i++) {
             Email e = fromJsonToEmail(email);
             list.add(0, e);
         }
+        return i;
     }
 
 
@@ -87,7 +89,7 @@ public class ClientModel {
 
     public void deleteEmail(Email e, short op) {
         System.out.println(e);
-        if(e!=null){
+        if (e != null) {
             Pair<Email, String> p = new Pair<>(e, email);
             Request r = new Request(op, p);
             r.start();
@@ -143,8 +145,8 @@ public class ClientModel {
                     assert response != null;
                     if (response.getOperation() == Message.SUCCESS) {
                         JSONObject js = new JSONObject((String) response.getObj());
-                        parseMailbox((JSONArray) js.opt("new"), inbox);
-                        String msg = "Hai ricevuto nuove mail";
+                        int mailNum = parseMailbox((JSONArray) js.opt("new"), inbox);
+                        String msg = "Hai ricevuto: " + mailNum + " nuov" + (mailNum == 1 ? "a" : "e") + " mail";
                         notificationsList.add(0, msg);
                     }
                 }
