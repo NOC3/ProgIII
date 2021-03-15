@@ -179,7 +179,7 @@ public class ClientModel {
                             Email ne = (Email) object;
                             ne.setID((int) response.getObj());
                             sent.add(0, ne);
-                            String msg = "Mail inviata correttamente a: " + ne.getRecipients();
+                            String msg = "Mail inviata correttamente a: " + ne.recipientsToString();
 
 
                             notificationsList.add(0, msg);

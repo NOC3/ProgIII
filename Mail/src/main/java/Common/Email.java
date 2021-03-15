@@ -137,7 +137,7 @@ public class Email implements Serializable{
         for (String r : rec) {
             recStr += r + ",";
         }
-        return recStr.substring(0, recStr.length()-2);
+        return recStr.substring(0, recStr.length()-1);
     }
 
     public JSONObject toJSON() {

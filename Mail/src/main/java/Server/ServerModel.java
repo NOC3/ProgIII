@@ -91,7 +91,7 @@ public class ServerModel {
             }
         }
         System.out.println(recNotFound);
-        return recNotFound.equals("") ? "" : recNotFound.substring(0, recNotFound.length() - 2);
+        return recNotFound.equals("") ? "" : recNotFound.substring(0, recNotFound.length() - 1);
     }
 
     private int sendEmail(Email e) {
