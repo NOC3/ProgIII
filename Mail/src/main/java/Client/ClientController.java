@@ -7,7 +7,6 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.text.Text;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.regex.Matcher;
@@ -24,6 +23,8 @@ public class ClientController {
     private Tab inbox;
     @FXML
     private Tab sent;
+    @FXML
+    private Tab newEmail;
 
     @FXML
     private TableView<Email> inboxList;
@@ -67,6 +68,18 @@ public class ClientController {
     private Button deleteEmailInbox;
     @FXML
     private Button deleteEmailSent;
+    @FXML
+    private Button forwardSent;
+    @FXML
+    private Button forwardInbox;
+    @FXML
+    private Button replySent;
+    @FXML
+    private Button replyInbox;
+    @FXML
+    private Button replyAllSent;
+    @FXML
+    private Button replyAllInbox;
 
     @FXML
     private TextField recipientsNewEmail;
@@ -74,6 +87,12 @@ public class ClientController {
     private TextField subjectNewEmail;
     @FXML
     private TextArea textNewEmail;
+
+    @FXML
+    private TitledPane notifications;
+
+    @FXML
+    private ListView notificationsList;
 
 
     public void setModel(ClientModel m) {
@@ -100,12 +119,15 @@ public class ClientController {
         sentList.setItems(this.model.getSent());
         inboxList.setItems(this.model.getInbox());
 
+        notificationsList.itemsProperty().bind(this.model.getNotificationsList());
+
 
         inboxList.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> showInboxEmailDetails(newValue));
         sentList.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> showSentEmailDetails(newValue));
 
+        notifications.setExpanded(false);
     }
 
 
@@ -140,10 +162,18 @@ public class ClientController {
 
     @FXML
     private void sendNewEmail() {
-        String[] destinatari = (recipientsNewEmail.getText()).split(",");
+        String[] destinatari =recipientsNewEmail.getText().split(",");
+
         ArrayList<String> rec = new ArrayList<>();
         for (String dest : destinatari) {
-            rec.add(dest);
+            if(!validateEmailAddress(dest)){
+                //comunicazione della situa
+                String mex = "Destinatari non corretti: "+dest;
+                model.getNotificationsList().add(mex);
+                notifications.setExpanded(true);
+                return;
+            }
+            rec.add(dest.trim());
         }
 
 
@@ -167,9 +197,74 @@ public class ClientController {
         }
     }
 
+    @FXML
+    private void forward(){
+        Email e=null;
+        if (topPane.getSelectionModel().getSelectedItem().getId().equals("sent")) {
+            e = sentList.getSelectionModel().getSelectedItem();
+        } else if (topPane.getSelectionModel().getSelectedItem().getId().equals("inbox")) {
+            e = inboxList.getSelectionModel().getSelectedItem();
+        }
 
-    //to try
-    private boolean validateEmailAddress(String email) {
+        String testo = e.toString();
+        String oggetto = "Inoltro: "+e.getSubject();
+
+        subjectNewEmail.setText(oggetto);
+        textNewEmail.setText(testo);
+
+        topPane.getSelectionModel().select(newEmail);
+    }
+
+    @FXML
+    private void reply(){
+        Email e=null;
+        if (topPane.getSelectionModel().getSelectedItem().getId().equals("sent")) {
+            e = sentList.getSelectionModel().getSelectedItem();
+        } else if (topPane.getSelectionModel().getSelectedItem().getId().equals("inbox")) {
+            e = inboxList.getSelectionModel().getSelectedItem();
+        }
+
+
+        assert e!=null;
+        //String testo = e.toString();
+        String oggetto = "RE: "+e.getSubject();
+        String recipient = e.getSender();
+
+        subjectNewEmail.setText(oggetto);
+        recipientsNewEmail.setText(recipient);
+
+        topPane.getSelectionModel().select(newEmail);
+
+    }
+
+    @FXML
+    private void replyAll(){
+        Email e=null;
+        if (topPane.getSelectionModel().getSelectedItem().getId().equals("sent")) {
+            e = sentList.getSelectionModel().getSelectedItem();
+        } else if (topPane.getSelectionModel().getSelectedItem().getId().equals("inbox")) {
+            e = inboxList.getSelectionModel().getSelectedItem();
+        }
+        assert e!=null;
+
+        String recipients = e.getSender();
+        for(String st : e.getRecipients()){
+            if(!st.equals(model.getEmail())){
+                recipients += ","+st;
+            }
+        }
+
+        String oggetto = "RE: "+e.getSubject();
+
+        subjectNewEmail.setText(oggetto);
+        recipientsNewEmail.setText(recipients);
+
+        topPane.getSelectionModel().select(newEmail);
+
+    }
+
+
+    private static boolean validateEmailAddress(String email) {
         Pattern pattern = Pattern.compile("^.+@.+\\..+$");
         Matcher matcher = pattern.matcher(email);
         return matcher.matches();

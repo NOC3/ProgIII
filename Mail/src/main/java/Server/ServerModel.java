@@ -81,11 +81,16 @@ public class ServerModel {
 
     private String recipientsExist(Email e) {
         ArrayList<String> rec = e.getRecipients();
+        System.out.println(rec);
         String recNotFound = "";
         for (String r : rec) {
-            if (!checkLogin(r))
-                recNotFound += r + ", ";
+            System.out.println(r);
+            if (!checkLogin(r)) {
+                System.out.println("-- Not found");
+                recNotFound += r + ",";
+            }
         }
+        System.out.println(recNotFound);
         return recNotFound.equals("") ? "" : recNotFound.substring(0, recNotFound.length() - 2);
     }
 
@@ -196,11 +201,9 @@ public class ServerModel {
             if (idList.contains((((JSONObject) json.get(i)).getInt("id")))){
                 idList.remove((Object)(((JSONObject) json.get(i)).getInt("id")));
                 res.put(json.get(i));
-                System.out.println("trovato");
             }
 
         }
-        System.out.println("Json da mandare: " + res);
         rLock.unlock();
         js.put("new", res);
         return js;
@@ -320,10 +323,10 @@ public class ServerModel {
                     case Message.CHECK_NEW:
                         if (checkNewEmail((String)message.getObj())) {
                             sendResponse(Message.SUCCESS, getNewEmails((String)message.getObj()).toString());
-                            model.logs.add(0, new Log("Richiesta nuove email" + (String)message.getObj()));
+                            model.logs.add(0, new Log("Richiesta nuove email da " + (String)message.getObj()));
                         } else {
                             sendResponse(Message.ERROR, "No nuove email");
-                            model.logs.add(0, new Log("No nuove email" + (String)message.getObj()));
+                            model.logs.add(0, new Log("No nuove email per " + (String)message.getObj()));
                         }
 
                         break;

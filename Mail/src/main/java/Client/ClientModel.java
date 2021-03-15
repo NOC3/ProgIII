@@ -1,12 +1,15 @@
 package Client;
 
 import Common.*;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.util.Pair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -20,6 +23,7 @@ public class ClientModel {
     private String email;
     private SimpleListProperty<Email> inbox;
     private SimpleListProperty<Email> sent;
+    private SimpleListProperty<String> notificationsList;
 
     public ClientModel(String email, JSONObject mailbox) {
         this.email = email;
@@ -29,6 +33,8 @@ public class ClientModel {
         sent = new SimpleListProperty<Email>();
         sent.set(FXCollections.observableArrayList(new ArrayList<Email>()));
 
+        notificationsList = new SimpleListProperty<String>();
+        notificationsList.set(FXCollections.observableArrayList(new ArrayList<String>()));
 
         parseMailbox((JSONArray) mailbox.opt("inbox"), inbox);
         parseMailbox((JSONArray) mailbox.opt("sent"), sent);
@@ -60,6 +66,10 @@ public class ClientModel {
 
     public SimpleListProperty<Email> getInbox() {
         return inbox;
+    }
+
+    public SimpleListProperty<String> getNotificationsList() {
+        return notificationsList;
     }
 
     public SimpleListProperty<Email> getSent() {
@@ -97,6 +107,7 @@ public class ClientModel {
             object = o;
         }
 
+
         private Message communicateToServer(Message toSend) throws IOException, ClassNotFoundException {
             Socket socket = null;
             socket = new Socket(host, port);
@@ -131,6 +142,8 @@ public class ClientModel {
                     if (response.getOperation() == Message.SUCCESS) {
                         JSONObject js = new JSONObject((String) response.getObj());
                         parseMailbox((JSONArray) js.opt("new"), inbox);
+                        String msg = "Hai ricevuto nuove mail";
+                        notificationsList.add(0, msg);
                     }
                 }
             } else { //si può togliere dato il while true
@@ -142,24 +155,44 @@ public class ClientModel {
                 }
 
                 assert response != null;
+                Message finalResponse = response;
+
                 if (response.getOperation() == Message.SUCCESS) {
                     switch (this.operation) {
                         case Message.REMOVE_EMAIL_INBOX:
                             deleteEmailFromList(inbox, (Email) ((Pair) object).getKey());
+
+
+                            notificationsList.add(0, (String) finalResponse.getObj());
+
+
                             break;
                         case Message.REMOVE_EMAIL_SENT:
                             deleteEmailFromList(sent, (Email) ((Pair) object).getKey());
+
+
+                            notificationsList.add(0, (String) finalResponse.getObj());
+
                             break;
+
                         case Message.SEND_NEW_EMAIL:
                             Email ne = (Email) object;
                             ne.setID((int) response.getObj());
                             sent.add(0, ne);
+                            String msg = "Mail inviata correttamente a: " + ne.getRecipients();
+
+
+                            notificationsList.add(0, msg);
+
                             break;
+
                         default:
                             break;
                     }
                 } else {
-                    //errore scritto nelle notifiche del client
+
+                    notificationsList.add(0, (String) finalResponse.getObj());
+
                 }
             }
         }
