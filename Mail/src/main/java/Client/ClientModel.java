@@ -166,8 +166,9 @@ public class ClientModel {
                         case Message.REMOVE_EMAIL_INBOX:
                             deleteEmailFromList(inbox, (Email) ((Pair) object).getKey());
 
-
-                            notificationsList.add(0, (String) finalResponse.getObj());
+                            Platform.runLater(
+                                    () -> notificationsList.add(0, (String) finalResponse.getObj())
+                            );
 
 
                             break;
@@ -175,7 +176,9 @@ public class ClientModel {
                             deleteEmailFromList(sent, (Email) ((Pair) object).getKey());
 
 
-                            notificationsList.add(0, (String) finalResponse.getObj());
+                            Platform.runLater(
+                                    () -> notificationsList.add(0, (String) finalResponse.getObj())
+                            );
 
                             break;
 
@@ -185,8 +188,12 @@ public class ClientModel {
                             sent.add(0, ne);
                             String msg = "Mail inviata correttamente a: " + ne.recipientsToString();
 
-
-                            notificationsList.add(0, msg);
+                            Platform.runLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    notificationsList.add(0, msg);
+                                }
+                            });
 
                             break;
 
@@ -195,7 +202,9 @@ public class ClientModel {
                     }
                 } else {
 
-                    notificationsList.add(0, (String) finalResponse.getObj());
+                    Platform.runLater(
+                            () -> notificationsList.add(0, (String) finalResponse.getObj())
+                    );
 
                 }
             }
