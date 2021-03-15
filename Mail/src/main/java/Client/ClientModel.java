@@ -87,9 +87,11 @@ public class ClientModel {
 
     public void deleteEmail(Email e, short op) {
         System.out.println(e);
-        Pair<Email, String> p = new Pair<>(e, email);
-        Request r = new Request(op, p);
-        r.start();
+        if(e!=null){
+            Pair<Email, String> p = new Pair<>(e, email);
+            Request r = new Request(op, p);
+            r.start();
+        }
     }
 
     public void deleteEmailFromList(SimpleListProperty<Email> list, Email e) {
