@@ -52,7 +52,6 @@ public class ClientController {
     private Text sentRecipientsText;
     @FXML
     private Text sentDataText;
-
     @FXML
     private Text inboxSubjectText;
     @FXML
@@ -61,6 +60,26 @@ public class ClientController {
     private Text inboxSenderText;
     @FXML
     private Text inboxDataText;
+
+    //Label dei campi delle mail
+    @FXML
+    private Text sentSubjectTextLabel;
+    @FXML
+    private Text sentTextTextLabel;
+    @FXML
+    private Text sentRecipientsTextLabel;
+    @FXML
+    private Text sentDataTextLabel;
+    @FXML
+    private Text inboxSubjectTextLabel;
+    @FXML
+    private Text inboxTextTextLabel;
+    @FXML
+    private Text inboxSenderTextLabel;
+    @FXML
+    private Text inboxDataTextLabel;
+
+
 
     @FXML
     private Button sendNewEmail;
