@@ -65,15 +65,11 @@ public class ClientController {
     @FXML
     private Text sentSubjectTextLabel;
     @FXML
-    private Text sentTextTextLabel;
-    @FXML
     private Text sentRecipientsTextLabel;
     @FXML
     private Text sentDataTextLabel;
     @FXML
     private Text inboxSubjectTextLabel;
-    @FXML
-    private Text inboxTextTextLabel;
     @FXML
     private Text inboxSenderTextLabel;
     @FXML
@@ -147,6 +143,14 @@ public class ClientController {
                 (observable, oldValue, newValue) -> showSentEmailDetails(newValue));
 
         notifications.setExpanded(false);
+
+
+        sentSubjectTextLabel.setVisible(false);
+        sentRecipientsTextLabel.setVisible(false);
+        sentDataTextLabel.setVisible(false);
+        inboxSubjectTextLabel.setVisible(false);
+        inboxSenderTextLabel.setVisible(false);
+        inboxDataTextLabel.setVisible(false);
     }
 
 
@@ -156,11 +160,22 @@ public class ClientController {
             sentSubjectText.setText(e.getSubject());
             sentRecipientsText.setText(String.valueOf(e.getRecipients()));
             sentTextText.setText(e.getText());
+
+            sentSubjectTextLabel.setVisible(true);
+
+            sentRecipientsTextLabel.setVisible(true);
+            sentDataTextLabel.setVisible(true);
+
         } else {
             sentSubjectText.setText("");
             sentTextText.setText("");
             sentRecipientsText.setText("");
             sentDataText.setText("");
+
+            sentSubjectTextLabel.setVisible(false);
+            sentRecipientsTextLabel.setVisible(false);
+            sentDataTextLabel.setVisible(false);
+
         }
     }
 
@@ -170,11 +185,20 @@ public class ClientController {
             inboxTextText.setText(e.getText());
             inboxSenderText.setText(e.getSender());
             inboxDataText.setText(e.getDate().toString());
+
+            inboxSubjectTextLabel.setVisible(true);
+
+            inboxSenderTextLabel.setVisible(true);
+            inboxDataTextLabel.setVisible(true);
         } else {
             inboxSubjectText.setText("");
             inboxTextText.setText("");
             inboxSenderText.setText("");
             inboxDataText.setText("");
+
+            inboxSubjectTextLabel.setVisible(false);
+            inboxSenderTextLabel.setVisible(false);
+            inboxDataTextLabel.setVisible(false);
         }
     }
 

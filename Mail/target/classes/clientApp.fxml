@@ -43,15 +43,15 @@
                                 </AnchorPane>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                                     <children>
-                                        <Text layoutX="14.0" layoutY="54.0" strokeType="OUTSIDE" strokeWidth="0.0"
+                                        <Text fx:id="inboxSenderTextLabel" layoutX="14.0" layoutY="54.0" strokeType="OUTSIDE" strokeWidth="0.0"
                                               text="Mittente"/>
-                                        <Text layoutX="14.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0"
-                                              text="Data"/>
                                         <Text fx:id="inboxSenderText" layoutX="112.0" layoutY="54.0"
                                               strokeType="OUTSIDE" strokeWidth="0.0"/>
+                                        <Text fx:id="inboxDataTextLabel" layoutX="14.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0"
+                                              text="Data"/>
                                         <Text fx:id="inboxDataText" layoutX="112.0" layoutY="70.0" strokeType="OUTSIDE"
                                               strokeWidth="0.0" text=""/>
-                                        <Text layoutX="15.0" layoutY="94.0" strokeType="OUTSIDE" strokeWidth="0.0"
+                                        <Text fx:id="inboxSubjectTextLabel" layoutX="15.0" layoutY="94.0" strokeType="OUTSIDE" strokeWidth="0.0"
                                               text="Oggetto"/>
                                         <Text fx:id="inboxSubjectText" layoutX="112.0" layoutY="94.0"
                                               strokeType="OUTSIDE" strokeWidth="0.0" text=""/>
@@ -93,20 +93,20 @@
                                 </AnchorPane>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                                     <children>
-                                        <Text layoutX="14.0" layoutY="54.0" strokeType="OUTSIDE" strokeWidth="0.0"
-                                              text="Destinatari"/>
-                                        <Text layoutX="14.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0"
-                                              text="Data"/>
-                                        <Text layoutX="15.0" layoutY="94.0" strokeType="OUTSIDE" strokeWidth="0.0"
+                                        <Text fx:id="sentSubjectTextLabel" layoutX="15.0" layoutY="94.0" strokeType="OUTSIDE" strokeWidth="0.0"
                                               text="Oggetto"/>
                                         <Text fx:id="sentSubjectText" layoutX="112.0" layoutY="94.0"
                                               strokeType="OUTSIDE" strokeWidth="0.0" text=""/>
-                                        <Text fx:id="sentTextText" layoutX="15.0" layoutY="120.0" strokeType="OUTSIDE"
-                                              strokeWidth="0.0" text="" wrappingWidth="443.7294921875"/>
+                                        <Text fx:id="sentRecipientsTextLabel" layoutX="14.0" layoutY="54.0" strokeType="OUTSIDE" strokeWidth="0.0"
+                                              text="Destinatari"/>
                                         <Text fx:id="sentRecipientsText" layoutX="112.0" layoutY="54.0"
                                               strokeType="OUTSIDE" strokeWidth="0.0" text=""/>
+                                        <Text fx:id="sentDataTextLabel" layoutX="14.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0"
+                                              text="Data"/>
                                         <Text fx:id="sentDataText" layoutX="112.0" layoutY="70.0" strokeType="OUTSIDE"
                                               strokeWidth="0.0" text=""/>
+                                        <Text fx:id="sentTextText" layoutX="15.0" layoutY="120.0" strokeType="OUTSIDE"
+                                              strokeWidth="0.0" text="" wrappingWidth="443.7294921875"/>
                                         <Button fx:id="deleteEmailSent" onAction="#deleteEmail" layoutX="16.0"
                                                 layoutY="10.0" mnemonicParsing="false" text="Elimina"/>
                                         <Button fx:id="replySent" onAction="#reply" layoutX="92.0" layoutY="10.0" mnemonicParsing="false"
