@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 
 public class ClientController {
 
-    ClientModel model;
+    public ClientModel model;
 
     @FXML
     private TabPane topPane;
@@ -158,11 +158,10 @@ public class ClientController {
         if (e != null) {
             sentDataText.setText(e.getDate().toString());
             sentSubjectText.setText(e.getSubject());
-            sentRecipientsText.setText(String.valueOf(e.getRecipients()));
+            sentRecipientsText.setText(e.recipientsToString());
             sentTextText.setText(e.getText());
 
             sentSubjectTextLabel.setVisible(true);
-
             sentRecipientsTextLabel.setVisible(true);
             sentDataTextLabel.setVisible(true);
 

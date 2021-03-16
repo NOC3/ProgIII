@@ -13,8 +13,10 @@ import java.awt.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.ConnectException;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Set;
 
 public class ClientModel {
     private String host = "localhost";
@@ -100,6 +102,12 @@ public class ClientModel {
         list.remove(e);
     }
 
+    public void onClose(){
+        Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
+        for(Thread t : threadSet){
+            t.interrupt();
+        }
+    }
 
     class Request extends Thread {
 
@@ -112,15 +120,45 @@ public class ClientModel {
         }
 
 
-        private Message communicateToServer(Message toSend) throws IOException, ClassNotFoundException {
+        private Message communicateToServer(Message toSend) {
             Socket socket = null;
-            socket = new Socket(host, port);
+            while (!this.isInterrupted()) {
+                try {
+                    socket = new Socket(host, port);
 
-            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-            out.writeObject(toSend);
+                    ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+                    out.writeObject(toSend);
 
-            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-            return (Message) in.readObject();
+                    ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+                    return (Message) in.readObject();
+                } catch (ConnectException e) {
+                    Platform.runLater(
+                            () -> {
+                                String err = "Errore: impossibile connettersi al server";
+                                notificationsList.add(0, err);
+                            }
+                    );
+                    try {
+                        Thread.sleep(20000);
+                    } catch (Exception ee) {
+                        Platform.runLater(
+                                () -> {
+                                    String err = "Errore generico di comunicazione con il server";
+                                    notificationsList.add(0, err);
+                                }
+                        );
+                        System.out.println(ee);
+                    }
+                } catch (Exception e) {
+                    Platform.runLater(
+                            () -> {
+                                String err = "Errore generico di comunicazione con il server";
+                                notificationsList.add(0, err);
+                            }
+                    );
+                }
+            }
+            return null;
         }
 
         public void run() {
@@ -136,27 +174,23 @@ public class ClientModel {
                         e.printStackTrace();
                     }
 
-                    try {
-                        response = communicateToServer(m);
-                    } catch (IOException | ClassNotFoundException e) {
-                        e.printStackTrace();
-                    }
+                    response = communicateToServer(m);
 
                     assert response != null;
                     if (response.getOperation() == Message.SUCCESS) {
                         JSONObject js = new JSONObject((String) response.getObj());
                         int mailNum = parseMailbox((JSONArray) js.opt("new"), inbox);
                         String msg = "Hai ricevuto: " + mailNum + " nuov" + (mailNum == 1 ? "a" : "e") + " mail";
-                        notificationsList.add(0, msg);
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                notificationsList.add(0, msg);
+                            }
+                        });
                     }
                 }
             } else { //si può togliere dato il while true
-
-                try {
-                    response = communicateToServer(m);
-                } catch (IOException | ClassNotFoundException e) {
-                    e.printStackTrace();
-                }
+                response = communicateToServer(m);
 
                 assert response != null;
                 Message finalResponse = response;
@@ -174,7 +208,6 @@ public class ClientModel {
                             break;
                         case Message.REMOVE_EMAIL_SENT:
                             deleteEmailFromList(sent, (Email) ((Pair) object).getKey());
-
 
                             Platform.runLater(
                                     () -> notificationsList.add(0, (String) finalResponse.getObj())

@@ -210,7 +210,6 @@ public class ServerModel {
     }
 
 
-
     //classi interne al model di comunicazione
 
     class Server extends Thread { //la pool
@@ -224,7 +223,7 @@ public class ServerModel {
                 //new threadPool
                 ExecutorService execPool = Executors.newFixedThreadPool(THREADNUM);
                 serverSocket = new ServerSocket(port);
-                while (true) {
+                while (!this.isInterrupted()) {
                     Socket incoming = serverSocket.accept();
 
                     execPool.execute(new Request(incoming));
@@ -309,6 +308,7 @@ public class ServerModel {
                         break;
                     case Message.LOGIN:
                         if (model.checkLogin((String) message.getObj())) {
+                            model.usersMail.get((String) message.getObj()).clear();
                             sendResponse(Message.SUCCESS,
                                     (model.getMailbox((String) message.getObj()).toString())
                             );

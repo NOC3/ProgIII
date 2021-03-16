@@ -20,6 +20,7 @@ public class ClientApp extends Application {
             primaryStage.setScene(new Scene(root));
 
             primaryStage.show();
+            primaryStage.setResizable(false);
 
             Login l = new Login();
 

@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import java.net.ConnectException;
 import java.net.Socket;
 import java.util.concurrent.Callable;
 
@@ -60,6 +61,10 @@ public class Login{
                 //error message
                 loginErrorMsg.setText("Errore");
             }
+        }catch (ConnectException e) {
+            System.out.println("Errore client " + e);
+            loginErrorMsg.setText("Errore: il server è down, riprovare.");
+            loginErrorMsg.setAlignment(Pos.CENTER);
         } catch (Exception e) {
             System.out.println("Errore client " + e);
             loginErrorMsg.setText("Errore");
@@ -90,13 +95,15 @@ public class Login{
             Parent root = loader.load();
             mainViewStage.setTitle("Email App");
             mainViewStage.setScene(new Scene(root));
-            mainViewStage.show();
 
             ClientController controller = loader.getController();
             ClientModel model = new ClientModel(userMail, mailbox);
             controller.setModel(model);
 
-
+            mainViewStage.setOnCloseRequest(
+                    x -> controller.model.onClose()
+            );
+            mainViewStage.show();
 
         }catch(Exception e){
             System.out.println(e);

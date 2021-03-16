@@ -7,8 +7,8 @@
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Client.Login">
    <children>
-      <TextField fx:id="loginEmail" layoutX="215.0" layoutY="187.0" />
-      <Button fx:id="loginSubmit" layoutX="269.0" layoutY="274.0" mnemonicParsing="false" onAction="#login" text="login" />
-      <Label fx:id="loginErrorMsg" layoutX="215.0" layoutY="250.0" prefHeight="16.0" prefWidth="171.0" text="  " textAlignment="CENTER" />
+      <TextField fx:id="loginEmail" layoutX="215.0" layoutY="187.0" AnchorPane.bottomAnchor="187.0" AnchorPane.topAnchor="187.0" />
+      <Button fx:id="loginSubmit" layoutX="269.0" layoutY="274.0" mnemonicParsing="false" onAction="#login" text="login" AnchorPane.bottomAnchor="100.0" AnchorPane.topAnchor="274.0" />
+      <Label fx:id="loginErrorMsg" layoutX="1.0" layoutY="250.0" prefHeight="16.0" prefWidth="600.0" text="  " textAlignment="CENTER" AnchorPane.bottomAnchor="134.0" AnchorPane.topAnchor="250.0" />
    </children>
 </AnchorPane>
