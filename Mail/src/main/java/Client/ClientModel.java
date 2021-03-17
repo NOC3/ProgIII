@@ -42,7 +42,6 @@ public class ClientModel {
         parseMailbox((JSONArray) mailbox.opt("sent"), sent);
 
         Request dm = new Request(Message.CHECK_NEW, this.email);
-        dm.setDaemon(true);
         dm.start();
     }
 
@@ -102,13 +101,6 @@ public class ClientModel {
         list.remove(e);
     }
 
-    public void onClose(){
-        Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
-        for(Thread t : threadSet){
-            t.interrupt();
-        }
-    }
-
     class Request extends Thread {
 
         private short operation;
@@ -117,6 +109,7 @@ public class ClientModel {
         public Request(short op, Object o) {
             operation = op;
             object = o;
+            this.setDaemon(true);
         }
 
 

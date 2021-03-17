@@ -15,11 +15,11 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" minHeight="400.0" minWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Client.ClientController">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Client.ClientController">
     <children>
         <TabPane fx:id="topPane" prefHeight="400.0" prefWidth="465.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <tabs>
-                <Tab fx:id="inbox" text="Ricevuti">
+                <Tab fx:id="inbox" style="-fx-font-size: 16;" text="Ricevuti">
                     <content>
                         <SplitPane dividerPositions="0.4032697547683924" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0">
                             <items>
@@ -86,7 +86,7 @@
                         </SplitPane>
                     </content>
                 </Tab>
-                <Tab fx:id="sent" text="Inviati">
+                <Tab fx:id="sent" style="-fx-font-size: 16;" text="Inviati">
                     <content>
                         <SplitPane dividerPositions="0.4032697547683924" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0">
                             <items>
@@ -153,18 +153,18 @@
                         </SplitPane>
                     </content>
                 </Tab>
-                <Tab fx:id="newEmail" text="Nuova mail">
+                <Tab fx:id="newEmail" style="-fx-font-size: 16;" text="Nuova mail">
                     <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                             <children>
                                 <TextField fx:id="recipientsNewEmail" layoutX="14.0" layoutY="14.0" prefHeight="26.0" prefWidth="437.0" promptText="Destinatari" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0" />
                                 <TextField fx:id="subjectNewEmail" layoutX="14.0" layoutY="51.0" prefHeight="26.0" prefWidth="437.0" promptText="Oggetto" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="50.0" />
                                 <TextArea fx:id="textNewEmail" layoutX="14.0" layoutY="87.0" prefHeight="220.0" prefWidth="438.0" promptText="Scrivi qua" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="87.0" />
-                                <Button fx:id="sendNewEmail" alignment="CENTER" layoutX="275.0" layoutY="321.0" maxHeight="26.0" maxWidth="50.0" minHeight="26.0" minWidth="50.0" mnemonicParsing="false" onAction="#sendNewEmail" prefHeight="26.0" prefWidth="50.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="275.0" AnchorPane.rightAnchor="275.0" >
+                                <Button fx:id="sendNewEmail" alignment="CENTER" layoutX="275.0" layoutY="321.0" maxHeight="26.0" maxWidth="50.0" minHeight="26.0" minWidth="50.0" mnemonicParsing="false" onAction="#sendNewEmail" prefHeight="26.0" prefWidth="50.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="275.0" AnchorPane.rightAnchor="275.0">
                                     <graphic>
                                         <ImageView fitHeight="27.0" fitWidth="27.0">
                                             <image>
-                                                <Image url="@img/icons8-forward-button-50.png" />
+                                                <Image url="@img/icons8-sent-50.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
@@ -175,9 +175,9 @@
                 </Tab>
             </tabs>
         </TabPane>
-        <TitledPane fx:id="notifications" animated="false" layoutX="465.0" prefHeight="400.0" prefWidth="242.0" text="Notifiche" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <TitledPane fx:id="notifications" animated="false" expanded="false" layoutX="465.0" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" prefHeight="400.0" text="Notifiche" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <content>
-                <ListView fx:id="notificationsList" prefHeight="200.0" prefWidth="200.0" />
+                <ListView fx:id="notificationsList" fixedCellSize="100.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="373.0" prefWidth="265.0" />
             </content>
         </TitledPane>
     </children>

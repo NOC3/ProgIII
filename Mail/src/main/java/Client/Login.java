@@ -95,17 +95,13 @@ public class Login{
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/clientApp.fxml"));
             Parent root = loader.load();
             mainViewStage.setTitle("Email App");
-            mainViewStage.setScene(new Scene(root));
 
+            mainViewStage.setScene(new Scene(root));
             ClientController controller = loader.getController();
             ClientModel model = new ClientModel(userMail, mailbox);
             controller.setModel(model);
 
-            mainViewStage.setOnCloseRequest(
-                    x -> controller.model.onClose()
-            );
             mainViewStage.show();
-
         }catch(Exception e){
             System.out.println(e);
         }
