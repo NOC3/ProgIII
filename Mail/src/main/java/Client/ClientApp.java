@@ -7,12 +7,10 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class ClientApp extends Application {
-
     @Override
     public void start(Stage primaryStage) {
 
         try{
-
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/login.fxml"));
             Parent root = loader.load();
 
@@ -23,15 +21,12 @@ public class ClientApp extends Application {
             primaryStage.setResizable(false);
 
             Login l = new Login();
-
         } catch (Exception e){
             System.out.println(e.getLocalizedMessage());
         }
     }
 
-
     public static void main(String[] args) {
         launch(args);
     }
-
 }

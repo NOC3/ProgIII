@@ -7,6 +7,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.text.Text;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.regex.Matcher;
@@ -74,7 +75,6 @@ public class ClientController {
     private Text inboxSenderTextLabel;
     @FXML
     private Text inboxDataTextLabel;
-
 
 
     @FXML
@@ -151,6 +151,15 @@ public class ClientController {
         inboxSubjectTextLabel.setVisible(false);
         inboxSenderTextLabel.setVisible(false);
         inboxDataTextLabel.setVisible(false);
+
+        forwardSent.setVisible(false);
+        replyAllSent.setVisible(false);
+        replySent.setVisible(false);
+        deleteEmailSent.setVisible(false);
+        deleteEmailInbox.setVisible(false);
+        replyAllInbox.setVisible(false);
+        forwardInbox.setVisible(false);
+        replyInbox.setVisible(false);
     }
 
 
@@ -165,6 +174,12 @@ public class ClientController {
             sentRecipientsTextLabel.setVisible(true);
             sentDataTextLabel.setVisible(true);
 
+
+            forwardSent.setVisible(true);
+            replyAllSent.setVisible(true);
+            replySent.setVisible(true);
+            deleteEmailSent.setVisible(true);
+
         } else {
             sentSubjectText.setText("");
             sentTextText.setText("");
@@ -175,6 +190,10 @@ public class ClientController {
             sentRecipientsTextLabel.setVisible(false);
             sentDataTextLabel.setVisible(false);
 
+            forwardSent.setVisible(false);
+            replyAllSent.setVisible(false);
+            replySent.setVisible(false);
+            deleteEmailSent.setVisible(false);
         }
     }
 
@@ -186,9 +205,14 @@ public class ClientController {
             inboxDataText.setText(e.getDate().toString());
 
             inboxSubjectTextLabel.setVisible(true);
-
             inboxSenderTextLabel.setVisible(true);
             inboxDataTextLabel.setVisible(true);
+
+
+            deleteEmailInbox.setVisible(true);
+            replyAllInbox.setVisible(true);
+            forwardInbox.setVisible(true);
+            replyInbox.setVisible(true);
         } else {
             inboxSubjectText.setText("");
             inboxTextText.setText("");
@@ -198,19 +222,24 @@ public class ClientController {
             inboxSubjectTextLabel.setVisible(false);
             inboxSenderTextLabel.setVisible(false);
             inboxDataTextLabel.setVisible(false);
+
+            deleteEmailInbox.setVisible(false);
+            replyAllInbox.setVisible(false);
+            forwardInbox.setVisible(false);
+            replyInbox.setVisible(false);
         }
     }
 
 
     @FXML
     private void sendNewEmail() {
-        String[] destinatari =recipientsNewEmail.getText().split(",");
+        String[] destinatari = recipientsNewEmail.getText().split(",");
 
         ArrayList<String> rec = new ArrayList<>();
         for (String dest : destinatari) {
-            if(!validateEmailAddress(dest)){
+            if (!validateEmailAddress(dest)) {
                 //comunicazione della situa
-                String mex = "Destinatari non corretti: "+dest;
+                String mex = "Destinatari non corretti: " + dest;
                 model.getNotificationsList().add(mex);
                 notifications.setExpanded(true);
                 return;
@@ -240,8 +269,8 @@ public class ClientController {
     }
 
     @FXML
-    private void forward(){
-        Email e=null;
+    private void forward() {
+        Email e = null;
         if (topPane.getSelectionModel().getSelectedItem().getId().equals("sent")) {
             e = sentList.getSelectionModel().getSelectedItem();
         } else if (topPane.getSelectionModel().getSelectedItem().getId().equals("inbox")) {
@@ -249,7 +278,7 @@ public class ClientController {
         }
 
         String testo = e.toString();
-        String oggetto = "Inoltro: "+e.getSubject();
+        String oggetto = "Inoltro: " + e.getSubject();
 
         subjectNewEmail.setText(oggetto);
         textNewEmail.setText(testo);
@@ -258,8 +287,8 @@ public class ClientController {
     }
 
     @FXML
-    private void reply(){
-        Email e=null;
+    private void reply() {
+        Email e = null;
         if (topPane.getSelectionModel().getSelectedItem().getId().equals("sent")) {
             e = sentList.getSelectionModel().getSelectedItem();
         } else if (topPane.getSelectionModel().getSelectedItem().getId().equals("inbox")) {
@@ -267,9 +296,9 @@ public class ClientController {
         }
 
 
-        assert e!=null;
+        assert e != null;
         //String testo = e.toString();
-        String oggetto = "RE: "+e.getSubject();
+        String oggetto = "RE: " + e.getSubject();
         String recipient = e.getSender();
 
         subjectNewEmail.setText(oggetto);
@@ -280,23 +309,23 @@ public class ClientController {
     }
 
     @FXML
-    private void replyAll(){
-        Email e=null;
+    private void replyAll() {
+        Email e = null;
         if (topPane.getSelectionModel().getSelectedItem().getId().equals("sent")) {
             e = sentList.getSelectionModel().getSelectedItem();
         } else if (topPane.getSelectionModel().getSelectedItem().getId().equals("inbox")) {
             e = inboxList.getSelectionModel().getSelectedItem();
         }
-        assert e!=null;
+        assert e != null;
 
         String recipients = e.getSender();
-        for(String st : e.getRecipients()){
-            if(!st.equals(model.getEmail())){
-                recipients += ","+st;
+        for (String st : e.getRecipients()) {
+            if (!st.equals(model.getEmail())) {
+                recipients += "," + st;
             }
         }
 
-        String oggetto = "RE: "+e.getSubject();
+        String oggetto = "RE: " + e.getSubject();
 
         subjectNewEmail.setText(oggetto);
         recipientsNewEmail.setText(recipients);

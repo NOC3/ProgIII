@@ -60,6 +60,7 @@ public class Login{
             } else {
                 //error message
                 loginErrorMsg.setText("Errore");
+                loginErrorMsg.setAlignment(Pos.CENTER);
             }
         }catch (ConnectException e) {
             System.out.println("Errore client " + e);

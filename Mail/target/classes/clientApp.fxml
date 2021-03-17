@@ -10,61 +10,76 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="Client.ClientController">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" minHeight="400.0" minWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Client.ClientController">
     <children>
-        <TabPane fx:id="topPane" prefHeight="400.0" prefWidth="465.0" tabClosingPolicy="UNAVAILABLE"
-                 AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                 AnchorPane.topAnchor="0.0">
+        <TabPane fx:id="topPane" prefHeight="400.0" prefWidth="465.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <tabs>
                 <Tab fx:id="inbox" text="Ricevuti">
                     <content>
-                        <SplitPane dividerPositions="0.4032697547683924" orientation="VERTICAL" prefHeight="200.0"
-                                   prefWidth="160.0">
+                        <SplitPane dividerPositions="0.4032697547683924" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0">
                             <items>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                                     <children>
-                                        <TableView fx:id="inboxList" layoutX="-5.0" layoutY="-1.0" prefHeight="191.0"
-                                                   prefWidth="476.0" AnchorPane.bottomAnchor="0.0"
-                                                   AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                                                   AnchorPane.topAnchor="0.0">
+                                        <TableView fx:id="inboxList" layoutX="-5.0" layoutY="-1.0" prefHeight="191.0" prefWidth="476.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                             <columns>
-                                                <TableColumn fx:id="inboxDateColumn" prefWidth="75.0" text="Data"/>
-                                                <TableColumn fx:id="inboxSenderColumn" prefWidth="75.0"
-                                                             text="Mittente"/>
-                                                <TableColumn fx:id="inboxSubjectColumn" prefWidth="75.0"
-                                                             text="Oggetto"/>
+                                                <TableColumn fx:id="inboxDateColumn" prefWidth="75.0" text="Data" />
+                                                <TableColumn fx:id="inboxSenderColumn" prefWidth="75.0" text="Mittente" />
+                                                <TableColumn fx:id="inboxSubjectColumn" prefWidth="75.0" text="Oggetto" />
                                             </columns>
                                         </TableView>
                                     </children>
                                 </AnchorPane>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                                     <children>
-                                        <Text fx:id="inboxSenderTextLabel" layoutX="14.0" layoutY="54.0" strokeType="OUTSIDE" strokeWidth="0.0"
-                                              text="Mittente"/>
-                                        <Text fx:id="inboxSenderText" layoutX="112.0" layoutY="54.0"
-                                              strokeType="OUTSIDE" strokeWidth="0.0"/>
-                                        <Text fx:id="inboxDataTextLabel" layoutX="14.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0"
-                                              text="Data"/>
-                                        <Text fx:id="inboxDataText" layoutX="112.0" layoutY="70.0" strokeType="OUTSIDE"
-                                              strokeWidth="0.0" text=""/>
-                                        <Text fx:id="inboxSubjectTextLabel" layoutX="15.0" layoutY="94.0" strokeType="OUTSIDE" strokeWidth="0.0"
-                                              text="Oggetto"/>
-                                        <Text fx:id="inboxSubjectText" layoutX="112.0" layoutY="94.0"
-                                              strokeType="OUTSIDE" strokeWidth="0.0" text=""/>
-                                        <Text fx:id="inboxTextText" layoutX="15.0" layoutY="111.06689453125"
-                                              strokeType="OUTSIDE" strokeWidth="0.0" text=""
-                                              wrappingWidth="443.7294921875" AnchorPane.leftAnchor="15.0"
-                                              AnchorPane.rightAnchor="141.2705078125" AnchorPane.topAnchor="99.0"/>
-                                        <Button fx:id="deleteEmailInbox" onAction="#deleteEmail" layoutX="16.0"
-                                                layoutY="10.0" mnemonicParsing="false" text="Elimina"/>
-                                        <Button fx:id="replyInbox" onAction="#reply" layoutX="92.0" layoutY="10.0" mnemonicParsing="false" text="Rispondi"/>
-                                        <Button fx:id="replyAllInbox" onAction="#replyAll" layoutX="175.0" layoutY="10.0" mnemonicParsing="false"
-                                                text="Rispondi a tutti"/>
-                                        <Button fx:id="forwardInbox" onAction="#forward" layoutX="300.0" layoutY="10.0" mnemonicParsing="false" text="Inoltra"/>
+                                        <Text fx:id="inboxSenderTextLabel" layoutX="15.0" layoutY="65.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Mittente" />
+                                        <Text fx:id="inboxSenderText" layoutX="112.0" layoutY="65.0" strokeType="OUTSIDE" strokeWidth="0.0" />
+                                        <Text fx:id="inboxDataTextLabel" layoutX="15.0" layoutY="80.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Data" />
+                                        <Text fx:id="inboxDataText" layoutX="112.0" layoutY="80.0" strokeType="OUTSIDE" strokeWidth="0.0" text="" />
+                                        <Text fx:id="inboxSubjectTextLabel" layoutX="15.0" layoutY="95.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Oggetto" />
+                                        <Text fx:id="inboxSubjectText" layoutX="112.0" layoutY="95.0" strokeType="OUTSIDE" strokeWidth="0.0" text="" />
+                                        <Text fx:id="inboxTextText" layoutX="15.0" layoutY="110" strokeType="OUTSIDE" strokeWidth="0.0" text="" wrappingWidth="443.7294921875" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="141.2705078125" AnchorPane.topAnchor="99.0" />
+                                        <Button fx:id="deleteEmailInbox" layoutX="28.0" layoutY="5.0" mnemonicParsing="false" onAction="#deleteEmail" prefHeight="34.0" prefWidth="33.0">
+                                            <graphic>
+                                                <ImageView fitHeight="27.0" fitWidth="27.0">
+                                                    <image>
+                                                        <Image url="@img/icons8-delete-50.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+
+                                        <Button fx:id="replyInbox" layoutX="78.0" layoutY="5.0" mnemonicParsing="false" onAction="#reply">
+                                            <graphic>
+                                                <ImageView fitHeight="27.0" fitWidth="27.0">
+                                                    <image>
+                                                        <Image url="@img/icons8-reply-arrow-50.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="replyAllInbox" layoutX="128.0" layoutY="5.0" mnemonicParsing="false" onAction="#replyAll">
+                                            <graphic>
+                                                <ImageView fitHeight="27.0" fitWidth="27.0">
+                                                    <image>
+                                                        <Image url="@img/icons8-reply-all-arrow-50.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Button fx:id="forwardInbox" layoutX="178.0" layoutY="5.0" mnemonicParsing="false" onAction="#forward">
+                                            <graphic>
+                                                <ImageView fitHeight="27.0" fitWidth="27.0">
+                                                    <image>
+                                                        <Image url="@img/icons8-forward-arrow-50.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
                                     </children>
                                 </AnchorPane>
                             </items>
@@ -73,48 +88,65 @@
                 </Tab>
                 <Tab fx:id="sent" text="Inviati">
                     <content>
-                        <SplitPane dividerPositions="0.4032697547683924" orientation="VERTICAL" prefHeight="200.0"
-                                   prefWidth="160.0">
+                        <SplitPane dividerPositions="0.4032697547683924" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0">
                             <items>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                                     <children>
-                                        <TableView fx:id="sentList" layoutX="-5.0" layoutY="-1.0" prefHeight="144.0"
-                                                   prefWidth="466.0" AnchorPane.bottomAnchor="0.0"
-                                                   AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-6.0"
-                                                   AnchorPane.topAnchor="0.0">
+                                        <TableView fx:id="sentList" layoutX="-5.0" layoutY="-1.0" prefHeight="144.0" prefWidth="466.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-6.0" AnchorPane.topAnchor="0.0">
                                             <columns>
-                                                <TableColumn fx:id="sentDateColumn" prefWidth="75.0" text="Data"/>
-                                                <TableColumn fx:id="sentRecipientsColumn" prefWidth="75.0"
-                                                             text="Destinatari"/>
-                                                <TableColumn fx:id="sentSubjectColumn" prefWidth="75.0" text="Oggetto"/>
+                                                <TableColumn fx:id="sentDateColumn" prefWidth="75.0" text="Data" />
+                                                <TableColumn fx:id="sentRecipientsColumn" prefWidth="75.0" text="Destinatari" />
+                                                <TableColumn fx:id="sentSubjectColumn" prefWidth="75.0" text="Oggetto" />
                                             </columns>
                                         </TableView>
                                     </children>
                                 </AnchorPane>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                                     <children>
-                                        <Text fx:id="sentSubjectTextLabel" layoutX="15.0" layoutY="94.0" strokeType="OUTSIDE" strokeWidth="0.0"
-                                              text="Oggetto"/>
-                                        <Text fx:id="sentSubjectText" layoutX="112.0" layoutY="94.0"
-                                              strokeType="OUTSIDE" strokeWidth="0.0" text=""/>
-                                        <Text fx:id="sentRecipientsTextLabel" layoutX="14.0" layoutY="54.0" strokeType="OUTSIDE" strokeWidth="0.0"
-                                              text="Destinatari"/>
-                                        <Text fx:id="sentRecipientsText" layoutX="112.0" layoutY="54.0"
-                                              strokeType="OUTSIDE" strokeWidth="0.0" text=""/>
-                                        <Text fx:id="sentDataTextLabel" layoutX="14.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0"
-                                              text="Data"/>
-                                        <Text fx:id="sentDataText" layoutX="112.0" layoutY="70.0" strokeType="OUTSIDE"
-                                              strokeWidth="0.0" text=""/>
-                                        <Text fx:id="sentTextText" layoutX="15.0" layoutY="120.0" strokeType="OUTSIDE"
-                                              strokeWidth="0.0" text="" wrappingWidth="443.7294921875"/>
-                                        <Button fx:id="deleteEmailSent" onAction="#deleteEmail" layoutX="16.0"
-                                                layoutY="10.0" mnemonicParsing="false" text="Elimina"/>
-                                        <Button fx:id="replySent" onAction="#reply" layoutX="92.0" layoutY="10.0" mnemonicParsing="false"
-                                                text="Rispondi"/>
-                                        <Button fx:id="replyAllSent" onAction="#replyAll" layoutX="175.0" layoutY="10.0" mnemonicParsing="false"
-                                                text="Rispondi a tutti"/>
-                                        <Button fx:id="forwardSent" onAction="#forward" layoutX="300.0" layoutY="10.0" mnemonicParsing="false"
-                                                text="Inoltra"/>
+                                        <Text fx:id="sentRecipientsTextLabel" layoutX="15.0" layoutY="65.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Destinatari" />
+                                        <Text fx:id="sentRecipientsText" layoutX="112.0" layoutY="65.0" strokeType="OUTSIDE" strokeWidth="0.0" text="" />
+                                        <Text fx:id="sentDataTextLabel" layoutX="15.0" layoutY="80.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Data" />
+                                        <Text fx:id="sentDataText" layoutX="112.0" layoutY="80.0" strokeType="OUTSIDE" strokeWidth="0.0" text="" />
+                                        <Text fx:id="sentSubjectTextLabel" layoutX="15.0" layoutY="95.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Oggetto" />
+                                        <Text fx:id="sentSubjectText" layoutX="112.0" layoutY="95.0" strokeType="OUTSIDE" strokeWidth="0.0" text="" />
+                                        <Text fx:id="sentTextText" layoutX="15.0" layoutY="110.0" strokeType="OUTSIDE" strokeWidth="0.0" text="" wrappingWidth="443.7294921875" />
+                              <Button fx:id="deleteEmailSent" layoutX="28.0" layoutY="5.0" mnemonicParsing="false" onAction="#deleteEmail" prefHeight="34.0" prefWidth="33.0">
+                                 <graphic>
+                                    <ImageView fitHeight="27.0" fitWidth="27.0">
+                                       <image>
+                                          <Image url="@img/icons8-delete-50.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="replySent" layoutX="78.0" layoutY="5.0" mnemonicParsing="false" onAction="#reply">
+                                 <graphic>
+                                    <ImageView fitHeight="27.0" fitWidth="27.0">
+                                       <image>
+                                          <Image url="@img/icons8-reply-arrow-50.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="replyAllSent" layoutX="128.0" layoutY="5.0" mnemonicParsing="false" onAction="#replyAll">
+                                 <graphic>
+                                    <ImageView fitHeight="27.0" fitWidth="27.0">
+                                       <image>
+                                          <Image url="@img/icons8-reply-all-arrow-50.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="forwardSent" layoutX="178.0" layoutY="5.0" mnemonicParsing="false" onAction="#forward">
+                                 <graphic>
+                                    <ImageView fitHeight="27.0" fitWidth="27.0">
+                                       <image>
+                                          <Image url="@img/icons8-forward-arrow-50.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+
                                     </children>
                                 </AnchorPane>
                             </items>
@@ -125,32 +157,27 @@
                     <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                             <children>
-                                <TextField fx:id="recipientsNewEmail" layoutX="14.0" layoutY="14.0" prefHeight="26.0"
-                                           prefWidth="437.0" promptText="Destinatari" AnchorPane.leftAnchor="14.0"
-                                           AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0"/>
-                                <TextField fx:id="subjectNewEmail" layoutX="14.0" layoutY="51.0" prefHeight="26.0"
-                                           prefWidth="437.0" promptText="Oggetto" AnchorPane.leftAnchor="14.0"
-                                           AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="50.0"/>
-                                <TextArea fx:id="textNewEmail" layoutX="14.0" layoutY="87.0" prefHeight="220.0"
-                                          prefWidth="438.0" promptText="Scrivi qua" AnchorPane.bottomAnchor="60.0"
-                                          AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0"
-                                          AnchorPane.topAnchor="87.0"/>
-                                <Button fx:id="sendNewEmail" alignment="CENTER" layoutX="275.0" layoutY="321.0"
-                                        maxHeight="26.0" maxWidth="50.0" minHeight="26.0" minWidth="50.0"
-                                        mnemonicParsing="false" onAction="#sendNewEmail" prefHeight="26.0"
-                                        prefWidth="50.0" text="Invia" AnchorPane.bottomAnchor="20.0"
-                                        AnchorPane.leftAnchor="275.0" AnchorPane.rightAnchor="275.0"/>
+                                <TextField fx:id="recipientsNewEmail" layoutX="14.0" layoutY="14.0" prefHeight="26.0" prefWidth="437.0" promptText="Destinatari" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0" />
+                                <TextField fx:id="subjectNewEmail" layoutX="14.0" layoutY="51.0" prefHeight="26.0" prefWidth="437.0" promptText="Oggetto" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="50.0" />
+                                <TextArea fx:id="textNewEmail" layoutX="14.0" layoutY="87.0" prefHeight="220.0" prefWidth="438.0" promptText="Scrivi qua" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="87.0" />
+                                <Button fx:id="sendNewEmail" alignment="CENTER" layoutX="275.0" layoutY="321.0" maxHeight="26.0" maxWidth="50.0" minHeight="26.0" minWidth="50.0" mnemonicParsing="false" onAction="#sendNewEmail" prefHeight="26.0" prefWidth="50.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="275.0" AnchorPane.rightAnchor="275.0" >
+                                    <graphic>
+                                        <ImageView fitHeight="27.0" fitWidth="27.0">
+                                            <image>
+                                                <Image url="@img/icons8-forward-button-50.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
                             </children>
                         </AnchorPane>
                     </content>
                 </Tab>
             </tabs>
         </TabPane>
-        <TitledPane fx:id="notifications" animated="false" layoutX="465.0" prefHeight="400.0" prefWidth="242.0"
-                    text="Notifiche" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                    AnchorPane.topAnchor="0.0">
+        <TitledPane fx:id="notifications" animated="false" layoutX="465.0" prefHeight="400.0" prefWidth="242.0" text="Notifiche" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <content>
-                <ListView fx:id="notificationsList" prefHeight="200.0" prefWidth="200.0"/>
+                <ListView fx:id="notificationsList" prefHeight="200.0" prefWidth="200.0" />
             </content>
         </TitledPane>
     </children>
