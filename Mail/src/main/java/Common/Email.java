@@ -11,6 +11,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Email implements Serializable{
     private int ID;
@@ -160,5 +162,12 @@ public class Email implements Serializable{
         }else{
             return false;
         }
+    }
+
+
+    public static boolean validateEmailAddress(String email) {
+        Pattern pattern = Pattern.compile("^.+@.+\\..+$");
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
     }
 }

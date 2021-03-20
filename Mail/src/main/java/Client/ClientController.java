@@ -8,6 +8,7 @@ import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.text.Text;
+import javafx.util.Callback;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -167,6 +168,27 @@ public class ClientController {
         replyAllInbox.setVisible(false);
         forwardInbox.setVisible(false);
         replyInbox.setVisible(false);
+
+
+        notificationsList.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
+            @Override
+            public ListCell<String> call(ListView<String> list) {
+                final ListCell cell = new ListCell() {
+                    private Text text;
+
+                    @Override
+                    public void updateItem(Object item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (!isEmpty()) {
+                            text = new Text(item.toString());
+                            text.setWrappingWidth(notificationsList.getPrefWidth());
+                            setGraphic(text);
+                        }
+                    }
+                };
+                return cell;
+            }
+        });
     }
 
 
@@ -245,7 +267,7 @@ public class ClientController {
 
         ArrayList<String> rec = new ArrayList<>();
         for (String dest : destinatari) {
-            if (!validateEmailAddress(dest)) {
+            if (!Email.validateEmailAddress(dest)) {
                 String mex;
                 if(dest == ""){
                     mex = "Inserire destinatari";
@@ -253,7 +275,6 @@ public class ClientController {
                     mex = "Destinatari non corretti: " + dest;
                 }
                 model.getNotificationsList().add(0, mex);
-//                notifications.setExpanded(true);
                 return;
             }
             if (!rec.contains(dest.trim()))
@@ -347,9 +368,4 @@ public class ClientController {
     }
 
 
-    private static boolean validateEmailAddress(String email) {
-        Pattern pattern = Pattern.compile("^.+@.+\\..+$");
-        Matcher matcher = pattern.matcher(email);
-        return matcher.matches();
-    }
 }

@@ -1,5 +1,6 @@
 package Client;
 
+import Common.Email;
 import Common.Message;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -26,9 +27,8 @@ import java.util.concurrent.Callable;
 //Controller del login
 public class Login{
 
-    private String host = "localhost";        //fissato
-    private final int port = 49152;                 //o 65535, stando a wikipedia
-//    https://www.adminsub.net/tcp-udp-port-finder <--- controllo porte
+    private String host = "localhost";
+    private final int port = 49152;
 
     @FXML
     private Button loginSubmit;
@@ -44,6 +44,11 @@ public class Login{
         Socket socket = null;
         try {
             //pattern matching per l'email
+            if(Email.validateEmailAddress(loginEmail.getText())){
+                loginErrorMsg.setText("L'email non è valida!");
+                return;
+            }
+
             Message mex = new Message(Message.LOGIN, loginEmail.getText());
 
             socket = new Socket(host, port);
@@ -60,16 +65,13 @@ public class Login{
             } else {
                 //error message
                 loginErrorMsg.setText("Errore");
-                loginErrorMsg.setAlignment(Pos.CENTER);
             }
         }catch (ConnectException e) {
             System.out.println("Errore client " + e);
             loginErrorMsg.setText("Errore: il server è down, riprovare.");
-            loginErrorMsg.setAlignment(Pos.CENTER);
         } catch (Exception e) {
             System.out.println("Errore client " + e);
             loginErrorMsg.setText("Errore");
-            loginErrorMsg.setAlignment(Pos.CENTER);
         } finally {
             try {
                 if (out != null)
