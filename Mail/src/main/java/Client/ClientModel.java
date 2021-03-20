@@ -4,19 +4,17 @@ import Common.*;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
+import javafx.scene.control.TitledPane;
 import javafx.util.Pair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import javax.swing.*;
-import java.awt.*;
-import java.io.IOException;
+
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Set;
 
 public class ClientModel {
     private String host = "localhost";
@@ -115,14 +113,16 @@ public class ClientModel {
 
         private Message communicateToServer(Message toSend) {
             Socket socket = null;
-            while (!this.isInterrupted()) {
+            ObjectOutputStream out = null;
+            ObjectInputStream in = null;
+            while (true) {
                 try {
                     socket = new Socket(host, port);
 
-                    ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+                    out = new ObjectOutputStream(socket.getOutputStream());
                     out.writeObject(toSend);
 
-                    ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+                    in = new ObjectInputStream(socket.getInputStream());
                     return (Message) in.readObject();
                 } catch (ConnectException e) {
                     Platform.runLater(
@@ -149,9 +149,22 @@ public class ClientModel {
                                 notificationsList.add(0, err);
                             }
                     );
+                } finally{
+                    try {
+                        if (out != null)
+                            out.close();
+
+                        if (in != null)
+                            in.close();
+
+                        if (socket != null)
+                            socket.close();
+
+                    } catch (Exception e) {
+                        System.out.println("Errore chiusura stream o socket: \n" + e);
+                    }
                 }
             }
-            return null;
         }
 
         public void run() {
@@ -195,6 +208,7 @@ public class ClientModel {
 
                             Platform.runLater(
                                     () -> notificationsList.add(0, (String) finalResponse.getObj())
+
                             );
 
 
@@ -204,6 +218,7 @@ public class ClientModel {
 
                             Platform.runLater(
                                     () -> notificationsList.add(0, (String) finalResponse.getObj())
+
                             );
 
                             break;
@@ -218,6 +233,7 @@ public class ClientModel {
                                 @Override
                                 public void run() {
                                     notificationsList.add(0, msg);
+
                                 }
                             });
 
@@ -227,11 +243,10 @@ public class ClientModel {
                             break;
                     }
                 } else {
-
                     Platform.runLater(
-                            () -> notificationsList.add(0, (String) finalResponse.getObj())
+                        () ->
+                            notificationsList.add(0, (String) finalResponse.getObj())
                     );
-
                 }
             }
         }

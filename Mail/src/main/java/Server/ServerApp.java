@@ -21,6 +21,10 @@ public class ServerApp extends Application {
             ServerModel model = new ServerModel();
             controller.setModel(model);
 
+            primaryStage.setOnCloseRequest(
+                    e -> model.getServerExecutor().shutdown()
+            );
+
         } catch (Exception e) {
             System.out.println(e.getLocalizedMessage());
         }

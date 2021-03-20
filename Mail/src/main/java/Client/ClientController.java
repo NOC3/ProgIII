@@ -4,6 +4,7 @@ package Client;
 import Common.Email;
 import Common.Message;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.text.Text;
@@ -135,7 +136,7 @@ public class ClientController {
         inboxList.setItems(this.model.getInbox());
 
         notificationsList.itemsProperty().bind(this.model.getNotificationsList());
-
+        notificationsList.itemsProperty().addListener(element -> notifications.setExpanded(true));
 
         inboxList.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> showInboxEmailDetails(newValue));
@@ -144,6 +145,12 @@ public class ClientController {
 
         notifications.setExpanded(false);
 
+
+        newEmail.setOnSelectionChanged(event -> {
+            recipientsNewEmail.clear();
+            subjectNewEmail.clear();
+            textNewEmail.clear();
+        });
 
         sentSubjectTextLabel.setVisible(false);
         sentRecipientsTextLabel.setVisible(false);
@@ -234,17 +241,23 @@ public class ClientController {
     @FXML
     private void sendNewEmail() {
         String[] destinatari = recipientsNewEmail.getText().split(",");
+        //System.out.println();
 
         ArrayList<String> rec = new ArrayList<>();
         for (String dest : destinatari) {
             if (!validateEmailAddress(dest)) {
-                //comunicazione della situa
-                String mex = "Destinatari non corretti: " + dest;
-                model.getNotificationsList().add(mex);
-                notifications.setExpanded(true);
+                String mex;
+                if(dest == ""){
+                    mex = "Inserire destinatari";
+                }else {
+                    mex = "Destinatari non corretti: " + dest;
+                }
+                model.getNotificationsList().add(0, mex);
+//                notifications.setExpanded(true);
                 return;
             }
-            rec.add(dest.trim());
+            if (!rec.contains(dest.trim()))
+                rec.add(dest.trim());
         }
 
 
@@ -331,7 +344,6 @@ public class ClientController {
         recipientsNewEmail.setText(recipients);
 
         topPane.getSelectionModel().select(newEmail);
-
     }
 
 
@@ -340,5 +352,4 @@ public class ClientController {
         Matcher matcher = pattern.matcher(email);
         return matcher.matches();
     }
-
 }
