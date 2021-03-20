@@ -44,7 +44,7 @@ public class Login{
         Socket socket = null;
         try {
             //pattern matching per l'email
-            if(Email.validateEmailAddress(loginEmail.getText())){
+            if(!Email.validateEmailAddress(loginEmail.getText())){
                 loginErrorMsg.setText("L'email non è valida!");
                 return;
             }
