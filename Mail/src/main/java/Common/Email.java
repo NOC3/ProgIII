@@ -87,7 +87,7 @@ public class Email implements Serializable{
 
     @Override
     public String toString() {
-        return "Mittente: " + sender + "\nDestinatari: " + recipients + "\nOggetto: " + subject + "\nTesto: " + text + "\nData: " + String.valueOf(date);
+        return "Mittente: " + sender + "\nData: " + date + "\nDestinatari: " + recipientsToString() + "\nOggetto: " + subject + "\nTesto:\n" + text;
     }
 
     public SimpleStringProperty mittenteToProperty() {

@@ -127,7 +127,7 @@ public class ClientController {
                 -> new SimpleStringProperty((email.getValue().getDate()).toString()));
 
         sentRecipientsColumn.setCellValueFactory(email
-                -> new SimpleStringProperty((email.getValue().getRecipients()).toString()));
+                -> new SimpleStringProperty((email.getValue().recipientsToString())));
 
         sentSubjectColumn.setCellValueFactory(email
                 -> new SimpleStringProperty(email.getValue().getSubject()));

@@ -96,7 +96,7 @@ public class Login{
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/clientApp.fxml"));
             Parent root = loader.load();
-            mainViewStage.setTitle("Email App");
+            mainViewStage.setTitle(userMail + " - Email App");
 
             mainViewStage.setScene(new Scene(root));
             ClientController controller = loader.getController();
