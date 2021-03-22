@@ -145,7 +145,7 @@ public class ClientController {
                 (observable, oldValue, newValue) -> showSentEmailDetails(newValue));
 
         notifications.setExpanded(false);
-
+        notificationsList.itemsProperty().addListener(event -> notifications.setExpanded(true));
 
         newEmail.setOnSelectionChanged(event -> {
             recipientsNewEmail.clear();
@@ -186,7 +186,7 @@ public class ClientController {
             inboxSenderText.setText(e.getSender());
             inboxDataText.setText(e.getDate().toString());
 
-            showInbox(false);
+            showInbox(true);
 
         } else {
             inboxSubjectText.setText("");
@@ -194,7 +194,7 @@ public class ClientController {
             inboxSenderText.setText("");
             inboxDataText.setText("");
 
-            showInbox(true);
+            showInbox(false);
         }
     }
 
