@@ -274,10 +274,10 @@ public class ClientController {
         String testo = e.toString();
         String oggetto = "Inoltro: " + e.getSubject();
 
+        topPane.getSelectionModel().select(newEmail);
+
         subjectNewEmail.setText(oggetto);
         textNewEmail.setText(testo);
-
-        topPane.getSelectionModel().select(newEmail);
     }
 
     @FXML
@@ -295,11 +295,10 @@ public class ClientController {
         String oggetto = "RE: " + e.getSubject();
         String recipient = e.getSender();
 
-        subjectNewEmail.setText(oggetto);
-        recipientsNewEmail.setText(recipient);
-
         topPane.getSelectionModel().select(newEmail);
 
+        subjectNewEmail.setText(oggetto);
+        recipientsNewEmail.setText(recipient);
     }
 
     @FXML
@@ -321,11 +320,9 @@ public class ClientController {
 
         String oggetto = "RE: " + e.getSubject();
 
+        topPane.getSelectionModel().select(newEmail);
+
         subjectNewEmail.setText(oggetto);
         recipientsNewEmail.setText(recipients);
-
-        topPane.getSelectionModel().select(newEmail);
     }
-
-
 }
