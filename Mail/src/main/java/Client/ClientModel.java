@@ -87,7 +87,6 @@ public class ClientModel {
     }
 
     public void deleteEmail(Email e, short op) {
-        System.out.println(e);
         if (e != null) {
             Pair<Email, String> p = new Pair<>(e, email);
             Request r = new Request(op, p);

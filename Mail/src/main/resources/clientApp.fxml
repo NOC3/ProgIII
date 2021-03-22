@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.scene.shape.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Client.ClientController">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Client.ClientController">
     <children>
         <TabPane fx:id="topPane" prefHeight="400.0" prefWidth="465.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <tabs>
@@ -32,7 +34,7 @@
                                         <Text fx:id="inboxDataText" layoutX="112.0" layoutY="80.0" strokeType="OUTSIDE" strokeWidth="0.0" text="" />
                                         <Text fx:id="inboxSubjectTextLabel" layoutX="15.0" layoutY="95.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Oggetto" />
                                         <Text fx:id="inboxSubjectText" layoutX="112.0" layoutY="95.0" strokeType="OUTSIDE" strokeWidth="0.0" text="" />
-                                        <Text fx:id="inboxTextText" layoutX="15.0" layoutY="110" strokeType="OUTSIDE" strokeWidth="0.0" text="" wrappingWidth="443.7294921875" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="141.2705078125" AnchorPane.topAnchor="99.0" />
+                                        <Text fx:id="inboxTextText" layoutX="15.0" layoutY="131.0" strokeType="OUTSIDE" strokeWidth="0.0" text="" wrappingWidth="443.7294921875" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="141.2705078125" AnchorPane.topAnchor="117.10299968719482" />
                                         <Button fx:id="deleteEmailInbox" layoutX="28.0" layoutY="5.0" mnemonicParsing="false" onAction="#deleteEmail" prefHeight="34.0" prefWidth="33.0">
                                             <graphic>
                                                 <ImageView fitHeight="27.0" fitWidth="27.0">
@@ -70,6 +72,7 @@
                                                 </ImageView>
                                             </graphic>
                                         </Button>
+                              <Line endX="438.0" layoutX="15.0" layoutY="107.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" />
                                     </children>
                                 </AnchorPane>
                             </items>
@@ -99,7 +102,7 @@
                                         <Text fx:id="sentDataText" layoutX="112.0" layoutY="80.0" strokeType="OUTSIDE" strokeWidth="0.0" text="" />
                                         <Text fx:id="sentSubjectTextLabel" layoutX="15.0" layoutY="95.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Oggetto" />
                                         <Text fx:id="sentSubjectText" layoutX="112.0" layoutY="95.0" strokeType="OUTSIDE" strokeWidth="0.0" text="" />
-                                        <Text fx:id="sentTextText" layoutX="15.0" layoutY="110.0" strokeType="OUTSIDE" strokeWidth="0.0" text="" wrappingWidth="443.7294921875" />
+                                        <Text fx:id="sentTextText" layoutX="15.0" layoutY="131.0" strokeType="OUTSIDE" strokeWidth="0.0" text="" wrappingWidth="443.7294921875" />
                               <Button fx:id="deleteEmailSent" layoutX="28.0" layoutY="5.0" mnemonicParsing="false" onAction="#deleteEmail" prefHeight="34.0" prefWidth="33.0">
                                  <graphic>
                                     <ImageView fitHeight="27.0" fitWidth="27.0">
@@ -137,6 +140,7 @@
                                  </graphic>
                               </Button>
 
+                                        <Line endX="438.0" layoutX="15.0" layoutY="107.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" />
                                     </children>
                                 </AnchorPane>
                             </items>

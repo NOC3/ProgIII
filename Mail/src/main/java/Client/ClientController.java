@@ -223,7 +223,6 @@ public class ClientController {
     @FXML
     private void sendNewEmail() {
         String[] destinatari = recipientsNewEmail.getText().split(",");
-        //System.out.println();
 
         ArrayList<String> rec = new ArrayList<>();
         for (String dest : destinatari) {
@@ -291,7 +290,7 @@ public class ClientController {
 
 
         assert e != null;
-        //String testo = e.toString();
+        String testo = " > " + e.toString().replaceAll("\n", "\n > ");
         String oggetto = "RE: " + e.getSubject();
         String recipient = e.getSender();
 
@@ -299,6 +298,7 @@ public class ClientController {
 
         subjectNewEmail.setText(oggetto);
         recipientsNewEmail.setText(recipient);
+        textNewEmail.setText(testo);
     }
 
     @FXML
@@ -319,10 +319,12 @@ public class ClientController {
         }
 
         String oggetto = "RE: " + e.getSubject();
+        String testo = " > " + e.toString().replaceAll("\n", "\n > ");
 
         topPane.getSelectionModel().select(newEmail);
 
         subjectNewEmail.setText(oggetto);
         recipientsNewEmail.setText(recipients);
+        textNewEmail.setText(testo);
     }
 }
