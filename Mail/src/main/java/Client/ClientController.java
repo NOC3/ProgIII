@@ -137,7 +137,7 @@ public class ClientController {
         inboxList.setItems(this.model.getInbox());
 
         notificationsList.itemsProperty().bind(this.model.getNotificationsList());
-        notificationsList.itemsProperty().addListener(element -> notifications.setExpanded(true));
+
 
         inboxList.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> showInboxEmailDetails(newValue));
@@ -153,42 +153,10 @@ public class ClientController {
             textNewEmail.clear();
         });
 
-        sentSubjectTextLabel.setVisible(false);
-        sentRecipientsTextLabel.setVisible(false);
-        sentDataTextLabel.setVisible(false);
-        inboxSubjectTextLabel.setVisible(false);
-        inboxSenderTextLabel.setVisible(false);
-        inboxDataTextLabel.setVisible(false);
-
-        forwardSent.setVisible(false);
-        replyAllSent.setVisible(false);
-        replySent.setVisible(false);
-        deleteEmailSent.setVisible(false);
-        deleteEmailInbox.setVisible(false);
-        replyAllInbox.setVisible(false);
-        forwardInbox.setVisible(false);
-        replyInbox.setVisible(false);
+        showInbox(false);
+        showSent(false);
 
 
-        notificationsList.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
-            @Override
-            public ListCell<String> call(ListView<String> list) {
-                final ListCell cell = new ListCell() {
-                    private Text text;
-
-                    @Override
-                    public void updateItem(Object item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (!isEmpty()) {
-                            text = new Text(item.toString());
-                            text.setWrappingWidth(notificationsList.getPrefWidth());
-                            setGraphic(text);
-                        }
-                    }
-                };
-                return cell;
-            }
-        });
     }
 
 
@@ -199,15 +167,7 @@ public class ClientController {
             sentRecipientsText.setText(e.recipientsToString());
             sentTextText.setText(e.getText());
 
-            sentSubjectTextLabel.setVisible(true);
-            sentRecipientsTextLabel.setVisible(true);
-            sentDataTextLabel.setVisible(true);
-
-
-            forwardSent.setVisible(true);
-            replyAllSent.setVisible(true);
-            replySent.setVisible(true);
-            deleteEmailSent.setVisible(true);
+            showSent(true);
 
         } else {
             sentSubjectText.setText("");
@@ -215,14 +175,7 @@ public class ClientController {
             sentRecipientsText.setText("");
             sentDataText.setText("");
 
-            sentSubjectTextLabel.setVisible(false);
-            sentRecipientsTextLabel.setVisible(false);
-            sentDataTextLabel.setVisible(false);
-
-            forwardSent.setVisible(false);
-            replyAllSent.setVisible(false);
-            replySent.setVisible(false);
-            deleteEmailSent.setVisible(false);
+            showSent(false);
         }
     }
 
@@ -233,30 +186,37 @@ public class ClientController {
             inboxSenderText.setText(e.getSender());
             inboxDataText.setText(e.getDate().toString());
 
-            inboxSubjectTextLabel.setVisible(true);
-            inboxSenderTextLabel.setVisible(true);
-            inboxDataTextLabel.setVisible(true);
+            showInbox(false);
 
-
-            deleteEmailInbox.setVisible(true);
-            replyAllInbox.setVisible(true);
-            forwardInbox.setVisible(true);
-            replyInbox.setVisible(true);
         } else {
             inboxSubjectText.setText("");
             inboxTextText.setText("");
             inboxSenderText.setText("");
             inboxDataText.setText("");
 
-            inboxSubjectTextLabel.setVisible(false);
-            inboxSenderTextLabel.setVisible(false);
-            inboxDataTextLabel.setVisible(false);
-
-            deleteEmailInbox.setVisible(false);
-            replyAllInbox.setVisible(false);
-            forwardInbox.setVisible(false);
-            replyInbox.setVisible(false);
+            showInbox(true);
         }
+    }
+
+
+    private void showSent(boolean b){
+        sentSubjectTextLabel.setVisible(b);
+        sentRecipientsTextLabel.setVisible(b);
+        sentDataTextLabel.setVisible(b);
+        forwardSent.setVisible(b);
+        replyAllSent.setVisible(b);
+        replySent.setVisible(b);
+        deleteEmailSent.setVisible(b);
+    }
+
+    private void showInbox(boolean b){
+        inboxSubjectTextLabel.setVisible(b);
+        inboxSenderTextLabel.setVisible(b);
+        inboxDataTextLabel.setVisible(b);
+        deleteEmailInbox.setVisible(b);
+        replyAllInbox.setVisible(b);
+        forwardInbox.setVisible(b);
+        replyInbox.setVisible(b);
     }
 
 
