@@ -20,7 +20,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 
 public class ServerModel {
-    private Map<String, ReentrantReadWriteLock> usersLocks; //contains all "registered"/valid user's mail
+    private Map<String, ReentrantReadWriteLock> usersLocks;
     private Map<String, ArrayList<Integer>> usersMail;
     private Server srv;
     private ObservableList<Log> logs;
@@ -34,7 +34,6 @@ public class ServerModel {
         srv.start();
     }
 
-    //forse meglio set<File> per accessi futuri, es eliminazione/nuova mail
     public void buildUsersMail() {
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         URL url = loader.getResource("./mails/");
@@ -88,7 +87,6 @@ public class ServerModel {
             rLock.unlock();
         }
 
-        // typecasting obj to JSONObject
         return obj;
     }
 
@@ -108,7 +106,7 @@ public class ServerModel {
     }
 
     private int sendEmail(Email e) {
-        int resId = -1;
+        int resId;
 
         ArrayList<String> writeOnUser = e.getRecipients();
 
@@ -125,14 +123,13 @@ public class ServerModel {
     }
 
     private boolean deleteOnJson(Email e, String user, String key) {
-        //scrittura
         Lock wLock = (usersLocks.get(e.getSender())).writeLock();
         wLock.lock();
         boolean found = false;
 
         JSONObject json = getMailbox(user);
 
-        System.out.println((JSONArray) json.opt(key) + "\n" + ((JSONArray) json.opt(key)).length());
+        System.out.println(json.opt(key) + "\n" + ((JSONArray) json.opt(key)).length());
         for (int i = 0; i < ((JSONArray) json.opt(key)).length(); i++) {
             System.out.println(((JSONObject) ((JSONArray) json.opt(key)).get(i)).getInt("id") + " | " + e.getID());
 
@@ -164,18 +161,15 @@ public class ServerModel {
             wLock.unlock();
         }
 
-
         return found;
     }
 
 
     private int writeOnJson(Email e, String user, String key) {
-        //scrittura
         Lock wLock = (usersLocks.get(e.getSender())).writeLock();
         wLock.lock();
 
         JSONObject json = getMailbox(user);
-
 
         int lastId = (int) json.opt("last_" + key + "_id");
         lastId += 1;
@@ -206,7 +200,6 @@ public class ServerModel {
             wLock.unlock();
         }
 
-
         return lastId;
     }
 
@@ -224,28 +217,23 @@ public class ServerModel {
         JSONArray json = (JSONArray) getMailbox(user).opt("inbox");
         ArrayList<Integer> idList = usersMail.get(user);
         for (int i = json.length() - 1; !idList.isEmpty(); i--) {
-            System.out.println("");
-
             if (idList.contains((((JSONObject) json.get(i)).getInt("id")))) {
                 idList.remove((Object) (((JSONObject) json.get(i)).getInt("id")));
                 res.put(json.get(i));
             }
-
         }
 
         rLock.unlock();
         js.put("new", res);
         return js;
-
     }
 
-    public ExecutorService getServerExecutor(){
+    public ExecutorService getServerExecutor() {
         return this.srv.execPool;
     }
 
     //classi interne al model di comunicazione
-
-    class Server extends Thread { //la pool
+    class Server extends Thread {
         private ServerSocket serverSocket;
         private static final int THREADNUM = 10;
         private final int port = 49152;
@@ -253,7 +241,6 @@ public class ServerModel {
 
         @Override
         public void run() {
-            Socket incoming = null;
             execPool = null;
             try {
                 //new threadPool
@@ -262,7 +249,7 @@ public class ServerModel {
                 serverSocket = new ServerSocket(port);
 
                 while (true) {
-                    incoming = serverSocket.accept();
+                    Socket incoming = serverSocket.accept();
                     execPool.execute(new Request(incoming));
                 }
 
@@ -295,88 +282,91 @@ public class ServerModel {
 
             @Override
             public void run() {
-                Message message = null;
+                Message message;
                 ObjectInputStream inputRequest = null;
                 try {
                     inputRequest = new ObjectInputStream(clientSocket.getInputStream());
                     Object msg = inputRequest.readObject();
 
-                    if (msg instanceof Message) {
+                    if (msg instanceof Message)
                         message = (Message) msg;
-                    } else {
+                    else
                         return;
-                    }
+
+                    Object o = null;
+                    short status = Message.ERROR;
+                    String logMsg = null;
 
                     switch (message.getOperation()) {
                         case Message.SEND_NEW_EMAIL:
                             String recipientsNotFound = model.recipientsExist((Email) message.getObj());
-
                             if (recipientsNotFound.equals("")) {
                                 int id = model.sendEmail((Email) message.getObj());
                                 if (id != -1) {
-                                    sendResponse(Message.SUCCESS, id);
-                                    model.logs.add(0, new Log("Email inviata correttamente"));
+                                    status = Message.SUCCESS;
+                                    o = id;
+                                    logMsg = "Email inviata correttamente";
                                 } else {
-                                    sendResponse(Message.ERROR, "Errore nell'invio email");
-                                    model.logs.add(0, new Log("Errore nell'invio mail - cod: " + id));
+                                    o = "Errore nell'invio email";
+                                    logMsg = "Errore nell'invio mail - cod: " + id;
                                 }
                             } else {
-                                sendResponse(Message.ERROR, "Recipient not found" + recipientsNotFound);
-                                model.logs.add(0, new Log("Recipient not found"));
+                                o = "Destinatari non esistenti: " + recipientsNotFound;
+                                logMsg = "Destinatari errati";
                             }
-
                             break;
 
                         case Message.REMOVE_EMAIL_INBOX:
                             if (deleteOnJson((Email) ((Pair) message.getObj()).getKey(), (String) ((Pair) message.getObj()).getValue(), "inbox")) {
-                                sendResponse(Message.SUCCESS, "Mail eliminata correttamente ");
-                                model.logs.add(0, new Log("Mail eliminata correttamente " + ((String) ((Pair) message.getObj()).getValue())));
+                                status = Message.SUCCESS;
+                                o = "Mail eliminata correttamente ";
+                                logMsg = "Mail eliminata correttamente " + (((Pair) message.getObj()).getValue());
                             } else {
-                                sendResponse(Message.ERROR, "Errore eliminazione mail");
-                                model.logs.add(0, new Log("Errore eliminazione mail " + ((String) ((Pair) message.getObj()).getValue())));
-
+                                o = "Errore eliminazione mail";
+                                logMsg = "Errore eliminazione mail " + (((Pair) message.getObj()).getValue());
                             }
                             break;
+
                         case Message.REMOVE_EMAIL_SENT:
                             if (deleteOnJson((Email) ((Pair) message.getObj()).getKey(), (String) ((Pair) message.getObj()).getValue(), "sent")) {
-                                sendResponse(Message.SUCCESS, "Mail eliminata correttamente");
-                                model.logs.add(0, new Log("Mail eliminata correttamente " + ((String) ((Pair) message.getObj()).getValue())));
-
+                                status = Message.SUCCESS;
+                                o = "Mail eliminata correttamente";
+                                logMsg = "Mail eliminata correttamente " + (((Pair) message.getObj()).getValue());
                             } else {
-                                sendResponse(Message.ERROR, "Errore eliminazione mail");
-                                model.logs.add(0, new Log("Errore eliminazione mail " + ((String) ((Pair) message.getObj()).getValue())));
+                                o = "Errore eliminazione mail";
+                                logMsg = "Errore eliminazione mail " + (((Pair) message.getObj()).getValue());
                             }
-
-
                             break;
+
                         case Message.LOGIN:
                             if (model.checkLogin((String) message.getObj())) {
-                                model.usersMail.get((String) message.getObj()).clear();
-                                sendResponse(Message.SUCCESS,
-                                        (model.getMailbox((String) message.getObj()).toString())
-                                );
-                                model.logs.add(0, new Log("Login success from: " + ((String) message.getObj())));
+                                model.usersMail.get(message.getObj()).clear();
+                                status = Message.SUCCESS;
+                                o = model.getMailbox((String) message.getObj()).toString();
+                                logMsg = "Login success from: " + (message.getObj());
                             } else {
-                                sendResponse(Message.ERROR,
-                                        "User not found"
-                                );
-                                model.logs.add(0, new Log("Login fail from: " + ((String) message.getObj())));
+                                o = "Email non trovata";
+                                logMsg = "Login fallito: " + (message.getObj());
                             }
                             break;
+
                         case Message.CHECK_NEW:
                             if (checkNewEmail((String) message.getObj())) {
-                                sendResponse(Message.SUCCESS, getNewEmails((String) message.getObj()).toString());
-                                model.logs.add(0, new Log("Richiesta nuove email da " + (String) message.getObj()));
+                                status = Message.SUCCESS;
+                                o = getNewEmails((String) message.getObj()).toString();
+                                logMsg = "Invio nuove email a " + message.getObj();
                             } else {
-                                sendResponse(Message.ERROR, "No nuove email");
-                                model.logs.add(0, new Log("No nuove email per " + (String) message.getObj()));
+                                o = "Nessuna nuova email";
+                                logMsg = "No nuove email per " + message.getObj();
                             }
-
                             break;
+
                         default:
                             break;
                     }
 
+                    sendResponse(status, o);
+                    model.logs.add(0, new Log(logMsg));
 
                 } catch (Exception e) {
                     System.out.println(e.getLocalizedMessage());
@@ -390,8 +380,6 @@ public class ServerModel {
                         e.printStackTrace();
                     }
                 }
-
-
             }
 
             private void sendResponse(short status, Object o) {
@@ -411,7 +399,6 @@ public class ServerModel {
                         e.printStackTrace();
                     }
                 }
-
             }
         }
     }
