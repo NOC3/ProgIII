@@ -45,7 +45,7 @@ public class Login{
         try {
             //pattern matching per l'email
             if(!Email.validateEmailAddress(loginEmail.getText())){
-                loginErrorMsg.setText("L'email non è valida!");
+                loginErrorMsg.setText("L'email non è valida");
                 return;
             }
 
@@ -64,7 +64,7 @@ public class Login{
                 openMainView(loginEmail.getText(), new JSONObject((String)response.getObj()));
             } else {
                 //error message
-                loginErrorMsg.setText("Errore");
+                loginErrorMsg.setText("Errore: impossibile effettuare il login");
             }
         }catch (ConnectException e) {
             System.out.println("Errore client " + e);
