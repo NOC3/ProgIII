@@ -10,6 +10,7 @@ import javafx.scene.control.*;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
 
+import javafx.scene.shape.Line;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.regex.Matcher;
@@ -111,6 +112,11 @@ public class ClientController {
     @FXML
     private ListView notificationsList;
 
+    @FXML
+    private Line sentLine;
+
+    @FXML
+    private Line inboxLine;
 
     public void setModel(ClientModel m) {
         this.model = m;
@@ -200,6 +206,7 @@ public class ClientController {
 
 
     private void showSent(boolean b){
+        sentLine.setVisible(b);
         sentSubjectTextLabel.setVisible(b);
         sentRecipientsTextLabel.setVisible(b);
         sentDataTextLabel.setVisible(b);
@@ -210,6 +217,7 @@ public class ClientController {
     }
 
     private void showInbox(boolean b){
+        inboxLine.setVisible(b);
         inboxSubjectTextLabel.setVisible(b);
         inboxSenderTextLabel.setVisible(b);
         inboxDataTextLabel.setVisible(b);

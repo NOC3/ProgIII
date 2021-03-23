@@ -92,16 +92,11 @@ public class ServerModel {
 
     private String recipientsExist(Email e) {
         ArrayList<String> rec = e.getRecipients();
-        System.out.println(rec);
         String recNotFound = "";
         for (String r : rec) {
-            System.out.println(r);
-            if (!checkLogin(r)) {
-                System.out.println("-- Not found");
+            if (!checkLogin(r))
                 recNotFound += r + ",";
-            }
         }
-        System.out.println(recNotFound);
         return recNotFound.equals("") ? "" : recNotFound.substring(0, recNotFound.length() - 1);
     }
 
@@ -129,10 +124,7 @@ public class ServerModel {
 
         JSONObject json = getMailbox(user);
 
-        System.out.println(json.opt(key) + "\n" + ((JSONArray) json.opt(key)).length());
         for (int i = 0; i < ((JSONArray) json.opt(key)).length(); i++) {
-            System.out.println(((JSONObject) ((JSONArray) json.opt(key)).get(i)).getInt("id") + " | " + e.getID());
-
             if (((JSONObject) ((JSONArray) json.opt(key)).get(i)).getInt("id") == e.getID()) {
                 ((JSONArray) json.opt(key)).remove(i);
                 found = true;
