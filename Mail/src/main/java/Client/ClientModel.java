@@ -4,11 +4,9 @@ import Common.*;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
-import javafx.scene.control.TitledPane;
 import javafx.util.Pair;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -28,13 +26,13 @@ public class ClientModel {
     public ClientModel(String email, JSONObject mailbox) {
         this.email = email;
 
-        inbox = new SimpleListProperty<Email>();
-        inbox.set(FXCollections.observableArrayList(new ArrayList<Email>()));
-        sent = new SimpleListProperty<Email>();
-        sent.set(FXCollections.observableArrayList(new ArrayList<Email>()));
+        inbox = new SimpleListProperty<>();
+        inbox.set(FXCollections.observableArrayList(new ArrayList<>()));
+        sent = new SimpleListProperty<>();
+        sent.set(FXCollections.observableArrayList(new ArrayList<>()));
 
-        notificationsList = new SimpleListProperty<String>();
-        notificationsList.set(FXCollections.observableArrayList(new ArrayList<String>()));
+        notificationsList = new SimpleListProperty<>();
+        notificationsList.set(FXCollections.observableArrayList(new ArrayList<>()));
 
         parseMailbox((JSONArray) mailbox.opt("inbox"), inbox);
         parseMailbox((JSONArray) mailbox.opt("sent"), sent);
@@ -45,19 +43,17 @@ public class ClientModel {
 
 
     public int parseMailbox(JSONArray array, SimpleListProperty<Email> list) {
-        // Iterator i = array.iterator();
-        JSONObject email = null;
+        JSONObject mail;
         int i;
-        for (i = 0; (email = (JSONObject) array.opt(i)) != null; i++) {
-            Email e = fromJsonToEmail(email);
-            list.add(0, e);
-        }
+
+        for (i = 0; (mail = (JSONObject) array.opt(i)) != null; i++)
+            list.add(0, fromJsonToEmail(mail));
+
         return i;
     }
 
 
     public Email fromJsonToEmail(JSONObject jo) {
-
         Email e =
                 new Email(jo.opt("id"), jo.opt("sender"), jo.opt("recipients"),
                         jo.opt("subject"), jo.opt("text"), jo.opt("date"));
@@ -148,7 +144,7 @@ public class ClientModel {
                                 notificationsList.add(0, err);
                             }
                     );
-                } finally{
+                } finally {
                     try {
                         if (out != null)
                             out.close();
@@ -168,7 +164,7 @@ public class ClientModel {
 
         public void run() {
             Message m = new Message(operation, object);
-            Message response = null;
+            Message response;
 
             //op that gets a "special treatment"
             if (operation == Message.CHECK_NEW) {
@@ -209,9 +205,8 @@ public class ClientModel {
                                     () -> notificationsList.add(0, (String) finalResponse.getObj())
 
                             );
-
-
                             break;
+
                         case Message.REMOVE_EMAIL_SENT:
                             deleteEmailFromList(sent, (Email) ((Pair) object).getKey());
 
@@ -219,7 +214,6 @@ public class ClientModel {
                                     () -> notificationsList.add(0, (String) finalResponse.getObj())
 
                             );
-
                             break;
 
                         case Message.SEND_NEW_EMAIL:
@@ -235,7 +229,6 @@ public class ClientModel {
 
                                 }
                             });
-
                             break;
 
                         default:
@@ -243,8 +236,8 @@ public class ClientModel {
                     }
                 } else {
                     Platform.runLater(
-                        () ->
-                            notificationsList.add(0, (String) finalResponse.getObj())
+                            () ->
+                                    notificationsList.add(0, (String) finalResponse.getObj())
                     );
                 }
             }
