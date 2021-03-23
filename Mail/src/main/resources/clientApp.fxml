@@ -18,9 +18,9 @@
                                     <children>
                                         <TableView fx:id="inboxList" layoutX="-5.0" layoutY="-1.0" prefHeight="191.0" prefWidth="476.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                             <columns>
-                                                <TableColumn fx:id="inboxDateColumn" prefWidth="75.0" text="Data" />
-                                                <TableColumn fx:id="inboxSenderColumn" prefWidth="75.0" text="Mittente" />
-                                                <TableColumn fx:id="inboxSubjectColumn" prefWidth="75.0" text="Oggetto" />
+                                                <TableColumn fx:id="inboxDateColumn" editable="false" minWidth="100.0" prefWidth="150.0" text="Data" />
+                                                <TableColumn fx:id="inboxSenderColumn" editable="false" minWidth="100.0" prefWidth="150.0" sortable="false" text="Mittente" />
+                                                <TableColumn fx:id="inboxSubjectColumn" editable="false" minWidth="100.0" prefWidth="150.0" sortable="false" text="Oggetto" />
                                             </columns>
                                         </TableView>
                                     </children>
@@ -86,9 +86,9 @@
                                     <children>
                                         <TableView fx:id="sentList" layoutX="-5.0" layoutY="-1.0" prefHeight="144.0" prefWidth="466.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-6.0" AnchorPane.topAnchor="0.0">
                                             <columns>
-                                                <TableColumn fx:id="sentDateColumn" prefWidth="75.0" text="Data" />
-                                                <TableColumn fx:id="sentRecipientsColumn" prefWidth="75.0" text="Destinatari" />
-                                                <TableColumn fx:id="sentSubjectColumn" prefWidth="75.0" text="Oggetto" />
+                                                <TableColumn fx:id="sentDateColumn" minWidth="100.0" prefWidth="150.0" text="Data" />
+                                                <TableColumn fx:id="sentRecipientsColumn" minWidth="100.0" prefWidth="150.0" text="Destinatari" />
+                                                <TableColumn fx:id="sentSubjectColumn" minWidth="100.0" prefWidth="150.0" text="Oggetto" />
                                             </columns>
                                         </TableView>
                                     </children>
