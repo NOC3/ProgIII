@@ -15,26 +15,27 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 
 public class ServerModel {
-    private Map<String, ReentrantReadWriteLock> usersLocks;
-    private Map<String, ArrayList<Integer>> usersMail;
-    private Server srv;
-    private ObservableList<Log> logs;
+    //         < mail ,     < lock                 , unpulled mails    >>
+    private Map<String, Pair<ReentrantReadWriteLock, ArrayList<Integer>>> usersUtil;
+    private final Server srv;
+    private final ObservableList<Log> logs;
 
     public ServerModel() {
         logs = FXCollections.observableArrayList();
-        buildUsersMail();
+        buildUsersUtil();
 
         srv = new Server();
         srv.setDaemon(true);
         srv.start();
     }
 
-    public void buildUsersMail() {
+    public void buildUsersUtil() {
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         URL url = loader.getResource("./mails/");
         assert url != null;
@@ -42,14 +43,71 @@ public class ServerModel {
 
         File[] listOfFiles = new File(path).listFiles();
 
-        usersLocks = new HashMap<>();
-        usersMail = new HashMap<>();
+        usersUtil = new HashMap<>();
 
         assert listOfFiles != null;
 
         for (File f : listOfFiles) {
-            usersLocks.put(f.getName().substring(0, f.getName().length() - 5), new ReentrantReadWriteLock()); //removing .json
-            usersMail.put(f.getName().substring(0, f.getName().length() - 5), new ArrayList<>());
+            String user = f.getName().substring(0, f.getName().length() - 5);
+            usersUtil.put(user, new Pair<>(new ReentrantReadWriteLock(), new ArrayList<>()));
+            checkUnpulledMail(user);
+        }
+    }
+
+    private void checkUnpulledMail(String user) {
+        Lock wLock = usersUtil.get(user).getKey().writeLock();
+        wLock.lock();
+
+        JSONObject json = getMailbox(user);
+
+        JSONArray js = (JSONArray) json.opt("unpulled_id");
+
+        if (js != null && js.length() != 0) {
+            ArrayList<Integer> idList = usersUtil.get(user).getValue();
+
+            for (int i = js.length() - 1; i >= 0; i--)
+                idList.add((Integer) js.remove(i));
+
+            updateJson(user, json);
+        }
+
+        wLock.unlock();
+    }
+
+    private void writeUnpulledEmail(String user) {
+        Lock wLock = usersUtil.get(user).getKey().writeLock();
+        wLock.lock();
+        JSONObject json = getMailbox(user);
+
+        for (int i = usersUtil.get(user).getValue().size() - 1; i >= 0; i--)
+            ((JSONArray) json.opt("unpulled_id")).put(usersUtil.get(user).getValue().remove(i));
+
+        updateJson(user, json);
+        wLock.unlock();
+    }
+
+    private void updateJson(String user, JSONObject json) {
+        FileWriter file = null;
+        Lock rLock = usersUtil.get(user).getKey().readLock();
+        rLock.lock();
+        try {
+            ClassLoader loader = Thread.currentThread().getContextClassLoader();
+            URL url = loader.getResource("./mails/" + user + ".json");
+            assert url != null;
+            String path = url.getPath();
+            file = new FileWriter(path);
+            file.write(json.toString());
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } finally {
+            if (file != null) {
+                try {
+                    file.close();
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
+            }
+            rLock.unlock();
         }
     }
 
@@ -58,11 +116,11 @@ public class ServerModel {
     }
 
     private boolean checkLogin(String user) {
-        return usersMail.containsKey(user);
+        return usersUtil.containsKey(user);
     }
 
     private JSONObject getMailbox(String user) {
-        Lock rLock = (usersLocks.get(user)).readLock();
+        Lock rLock = usersUtil.get(user).getKey().readLock();
         rLock.lock();
         JSONObject obj = null;
         FileReader filereader = null;
@@ -111,14 +169,14 @@ public class ServerModel {
         //write on recipients
         for (String user : writeOnUser) {
             Integer id = writeOnJson(e, user, "inbox");
-            usersMail.get(user).add(id);
+            usersUtil.get(user).getValue().add(id);
         }
 
         return resId;
     }
 
     private boolean deleteOnJson(Email e, String user, String key) {
-        Lock wLock = (usersLocks.get(e.getSender())).writeLock();
+        Lock wLock = (usersUtil.get(e.getSender())).getKey().writeLock();
         wLock.lock();
         boolean found = false;
 
@@ -132,33 +190,14 @@ public class ServerModel {
             }
         }
 
-        FileWriter file = null;
-        try {
-            ClassLoader loader = Thread.currentThread().getContextClassLoader();
-            URL url = loader.getResource("./mails/" + user + ".json");
-            assert url != null;
-            String path = url.getPath();
-            file = new FileWriter(path);
-            file.write(json.toString());
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        } finally {
-            if (file != null) {
-                try {
-                    file.close();
-                } catch (IOException ioException) {
-                    ioException.printStackTrace();
-                }
-            }
-            wLock.unlock();
-        }
+        updateJson(user, json);
+        wLock.unlock();
 
         return found;
     }
 
-
     private int writeOnJson(Email e, String user, String key) {
-        Lock wLock = (usersLocks.get(e.getSender())).writeLock();
+        Lock wLock = usersUtil.get(e.getSender()).getKey().writeLock();
         wLock.lock();
 
         JSONObject json = getMailbox(user);
@@ -171,43 +210,25 @@ public class ServerModel {
         e.setID(lastId);
         ((JSONArray) json.opt(key)).put(e.toJSON());
 
-        FileWriter file = null;
-        try {
-            ClassLoader loader = Thread.currentThread().getContextClassLoader();
-            URL url = loader.getResource("./mails/" + user + ".json");
-            assert url != null;
-            String path = url.getPath();
-            file = new FileWriter(path);
-            file.write(json.toString());
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        } finally {
-            if (file != null) {
-                try {
-                    file.close();
-                } catch (IOException ioException) {
-                    ioException.printStackTrace();
-                }
-            }
-            wLock.unlock();
-        }
+        updateJson(user, json);
+        wLock.unlock();
 
         return lastId;
     }
 
     private boolean checkNewEmail(String user) {
-        return !usersMail.get(user).isEmpty();
+        return !usersUtil.get(user).getValue().isEmpty();
     }
 
     private JSONObject getNewEmails(String user) {
         JSONArray res = new JSONArray();
         JSONObject js = new JSONObject();
 
-        Lock rLock = (usersLocks.get(user)).readLock();
+        Lock rLock = usersUtil.get(user).getKey().readLock();
         rLock.lock();
 
         JSONArray json = (JSONArray) getMailbox(user).opt("inbox");
-        ArrayList<Integer> idList = usersMail.get(user);
+        ArrayList<Integer> idList = usersUtil.get(user).getValue();
         for (int i = json.length() - 1; !idList.isEmpty(); i--) {
             if (idList.contains((((JSONObject) json.get(i)).getInt("id")))) {
                 idList.remove((Object) (((JSONObject) json.get(i)).getInt("id")));
@@ -220,9 +241,29 @@ public class ServerModel {
         return js;
     }
 
-    public ExecutorService getServerExecutor() {
-        return this.srv.execPool;
+    void shutdownPool() {
+        srv.execPool.shutdown(); // Disable new tasks from being submitted
+        try {
+            // Wait a while for existing tasks to terminate
+            if (!srv.execPool.awaitTermination(60, TimeUnit.SECONDS)) {
+                srv.execPool.shutdownNow(); // Cancel currently executing tasks
+                // Wait a while for tasks to respond to being cancelled
+                if (!srv.execPool.awaitTermination(60, TimeUnit.SECONDS))
+                    System.out.println("Pool did not terminate");
+            }
+        } catch (InterruptedException ie) {
+            // (Re-)Cancel if current thread also interrupted
+            srv.execPool.shutdownNow();
+            // Preserve interrupt status
+            Thread.currentThread().interrupt();
+        } finally {
+            for (String user : usersUtil.keySet()) {
+                if (!usersUtil.get(user).getValue().isEmpty())
+                    writeUnpulledEmail(user);
+            }
+        }
     }
+
 
     //classi interne al model di comunicazione
     class Server extends Thread {
@@ -253,8 +294,8 @@ public class ServerModel {
                     if (serverSocket != null)
                         serverSocket.close();
 
-                    if (!execPool.isShutdown())
-                        execPool.shutdown();
+                    if (execPool != null && !execPool.isShutdown())
+                        ServerModel.this.shutdownPool();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -332,7 +373,7 @@ public class ServerModel {
 
                         case Message.LOGIN:
                             if (model.checkLogin((String) message.getObj())) {
-                                model.usersMail.get(message.getObj()).clear();
+                                model.usersUtil.get(message.getObj()).getValue().clear();
                                 status = Message.SUCCESS;
                                 o = model.getMailbox((String) message.getObj()).toString();
                                 logMsg = "Login success from: " + (message.getObj());

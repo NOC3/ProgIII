@@ -22,7 +22,7 @@ public class ServerApp extends Application {
             controller.setModel(model);
 
             primaryStage.setOnCloseRequest(
-                    e -> model.getServerExecutor().shutdown()
+                    e -> model.shutdownPool()
             );
 
         } catch (Exception e) {
