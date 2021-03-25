@@ -6,10 +6,10 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+//Main del client
 public class ClientApp extends Application {
     @Override
     public void start(Stage primaryStage) {
-
         try{
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/login.fxml"));
             Parent root = loader.load();
@@ -20,7 +20,7 @@ public class ClientApp extends Application {
             primaryStage.show();
             primaryStage.setResizable(false);
 
-            Login l = new Login();
+            new Login();
         } catch (Exception e){
             System.out.println(e.getLocalizedMessage());
         }

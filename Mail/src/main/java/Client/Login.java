@@ -2,33 +2,29 @@ package Client;
 
 import Common.Email;
 import Common.Message;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import netscape.javascript.JSObject;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-
 import java.net.ConnectException;
 import java.net.Socket;
-import java.util.concurrent.Callable;
+
 
 //Controller del login
-public class Login{
+public class Login {
 
+    //parametri configurazione delle socket
     private String host = "localhost";
     private final int port = 49152;
+
 
     @FXML
     private Button loginSubmit;
@@ -37,14 +33,15 @@ public class Login{
     @FXML
     private Label loginErrorMsg;
 
+    //funzioni di login legata a loginSubmit
+    @FXML
     public void login() {
-        //creo connessione socket
         ObjectOutputStream out = null;
         ObjectInputStream in = null;
         Socket socket = null;
         try {
             //pattern matching per l'email
-            if(!Email.validateEmailAddress(loginEmail.getText())){
+            if (!Email.validateEmailAddress(loginEmail.getText())) {
                 loginErrorMsg.setText("L'email non è valida");
                 return;
             }
@@ -60,13 +57,13 @@ public class Login{
             Message response = (Message) in.readObject();
 
             if (response.getOperation() == Message.SUCCESS) {
-                //apro la view main
-                openMainView(loginEmail.getText(), new JSONObject((String)response.getObj()));
+                //apre la view del client
+                openMainView(loginEmail.getText(), new JSONObject((String) response.getObj()));
             } else {
                 //error message
                 loginErrorMsg.setText("Errore: impossibile effettuare il login");
             }
-        }catch (ConnectException e) {
+        } catch (ConnectException e) {
             System.out.println("Errore client " + e);
             loginErrorMsg.setText("Errore: il server è down, riprovare.");
         } catch (Exception e) {
@@ -89,8 +86,8 @@ public class Login{
         }
     }
 
-    private void openMainView(String userMail, JSONObject mailbox){
-        //nascondo la view, potrebbe essere utile recuperarla con il logout??
+    //nasconde la finestra di login e apre la finestra del client dopo aver settato model e controller
+    private void openMainView(String userMail, JSONObject mailbox) {
         loginSubmit.getScene().getWindow().hide();
         Stage mainViewStage = new Stage();
         try {
@@ -104,7 +101,7 @@ public class Login{
             controller.setModel(model);
 
             mainViewStage.show();
-        }catch(Exception e){
+        } catch (Exception e) {
             System.out.println(e);
         }
     }

@@ -6,7 +6,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.util.Pair;
 import org.json.*;
-
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -19,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-
+//Model del server
 public class ServerModel {
     //         < mail ,     < lock                 , unpulled mails    >>
     private Map<String, Pair<ReentrantReadWriteLock, ArrayList<Integer>>> usersUtil;
@@ -30,11 +29,13 @@ public class ServerModel {
         logs = FXCollections.observableArrayList();
         buildUsersUtil();
 
+        //inizializzazione del server (la pool di thread)
         srv = new Server();
         srv.setDaemon(true);
         srv.start();
     }
 
+    //inizializza per ogni utente il reentrantLock e l'array delle nuove email
     public void buildUsersUtil() {
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         URL url = loader.getResource("./mails/");
@@ -54,6 +55,7 @@ public class ServerModel {
         }
     }
 
+    //recupera gli id delle nuove email dell'utente
     private void checkUnpulledMail(String user) {
         Lock wLock = usersUtil.get(user).getKey().writeLock();
         wLock.lock();
@@ -74,6 +76,7 @@ public class ServerModel {
         wLock.unlock();
     }
 
+    //scrive su file gli id delle nuove email (alla chiusura del server)
     private void writeUnpulledEmail(String user) {
         Lock wLock = usersUtil.get(user).getKey().writeLock();
         wLock.lock();
@@ -86,10 +89,11 @@ public class ServerModel {
         wLock.unlock();
     }
 
+    //scrive il json aggiornato dell'utente
     private void updateJson(String user, JSONObject json) {
         FileWriter file = null;
-        Lock rLock = usersUtil.get(user).getKey().readLock();
-        rLock.lock();
+        Lock wLock = usersUtil.get(user).getKey().writeLock();
+        wLock.lock();
         try {
             ClassLoader loader = Thread.currentThread().getContextClassLoader();
             URL url = loader.getResource("./mails/" + user + ".json");
@@ -107,7 +111,7 @@ public class ServerModel {
                     ioException.printStackTrace();
                 }
             }
-            rLock.unlock();
+            wLock.unlock();
         }
     }
 
@@ -115,10 +119,12 @@ public class ServerModel {
         return logs;
     }
 
+    //controlla che l'email utente sia valida
     private boolean checkLogin(String user) {
         return usersUtil.containsKey(user);
     }
 
+    //restituisce l'intero JSONObject dell'utente
     private JSONObject getMailbox(String user) {
         Lock rLock = usersUtil.get(user).getKey().readLock();
         rLock.lock();
@@ -148,6 +154,7 @@ public class ServerModel {
         return obj;
     }
 
+    //controlla l'esistenza dei destinatari
     private String recipientsExist(Email e) {
         ArrayList<String> rec = e.getRecipients();
         String recNotFound = "";
@@ -158,15 +165,17 @@ public class ServerModel {
         return recNotFound.equals("") ? "" : recNotFound.substring(0, recNotFound.length() - 1);
     }
 
+    //aggiorna i file di mittente e destinatari, aggiunge l'id della mail nell'inbox dei destinatari
+    //restituisce l'id della mail del mittente
     private int sendEmail(Email e) {
         int resId;
 
         ArrayList<String> writeOnUser = e.getRecipients();
 
-        //write on sender
+        //scrittura sul json del mittente
         resId = writeOnJson(e, e.getSender(), "sent");
 
-        //write on recipients
+        //scrittura sui json dei destinatari
         for (String user : writeOnUser) {
             Integer id = writeOnJson(e, user, "inbox");
             usersUtil.get(user).getValue().add(id);
@@ -175,6 +184,7 @@ public class ServerModel {
         return resId;
     }
 
+    //elimina un'email da inbox o sent di un utente
     private boolean deleteOnJson(Email e, String user, String key) {
         Lock wLock = (usersUtil.get(e.getSender())).getKey().writeLock();
         wLock.lock();
@@ -196,6 +206,7 @@ public class ServerModel {
         return found;
     }
 
+    //aggiunge una email a inbox o sent di un utente
     private int writeOnJson(Email e, String user, String key) {
         Lock wLock = usersUtil.get(e.getSender()).getKey().writeLock();
         wLock.lock();
@@ -216,10 +227,12 @@ public class ServerModel {
         return lastId;
     }
 
+    //controlla se ci sono nuove email per un utente
     private boolean checkNewEmail(String user) {
         return !usersUtil.get(user).getValue().isEmpty();
     }
 
+    //restituisce le nuove email dell'utente
     private JSONObject getNewEmails(String user) {
         JSONArray res = new JSONArray();
         JSONObject js = new JSONObject();
@@ -241,20 +254,17 @@ public class ServerModel {
         return js;
     }
 
+    //chiusura del server, quindi della pool
     void shutdownPool() {
-        srv.execPool.shutdown(); // Disable new tasks from being submitted
+        srv.execPool.shutdown();
         try {
-            // Wait a while for existing tasks to terminate
             if (!srv.execPool.awaitTermination(60, TimeUnit.SECONDS)) {
-                srv.execPool.shutdownNow(); // Cancel currently executing tasks
-                // Wait a while for tasks to respond to being cancelled
+                srv.execPool.shutdownNow();
                 if (!srv.execPool.awaitTermination(60, TimeUnit.SECONDS))
                     System.out.println("Pool did not terminate");
             }
         } catch (InterruptedException ie) {
-            // (Re-)Cancel if current thread also interrupted
             srv.execPool.shutdownNow();
-            // Preserve interrupt status
             Thread.currentThread().interrupt();
         } finally {
             for (String user : usersUtil.keySet()) {
@@ -264,11 +274,16 @@ public class ServerModel {
         }
     }
 
+    /*
+      classi interne al model di comunicazione
+    */
 
-    //classi interne al model di comunicazione
+    //gestisce la pool di thread che accetta richieste dai client
     class Server extends Thread {
         private ServerSocket serverSocket;
+        //numero di thread della pool
         private static final int THREADNUM = 10;
+        //parametro configurazione delle socket
         private final int port = 49152;
         private ExecutorService execPool;
 
@@ -276,7 +291,6 @@ public class ServerModel {
         public void run() {
             execPool = null;
             try {
-                //new threadPool
                 execPool = Executors.newFixedThreadPool(THREADNUM);
 
                 serverSocket = new ServerSocket(port);
@@ -303,10 +317,10 @@ public class ServerModel {
         }
 
 
-        class Request implements Runnable { //le singole request
+        //gestione singole richieste dei client
+        class Request implements Runnable {
             Socket clientSocket;
             ServerModel model;
-
 
             public Request(Socket socket) {
                 clientSocket = socket;
@@ -415,6 +429,7 @@ public class ServerModel {
                 }
             }
 
+            //invio risposta al client
             private void sendResponse(short status, Object o) {
                 ObjectOutputStream outputRequest = null;
                 try {
@@ -436,6 +451,7 @@ public class ServerModel {
         }
     }
 
+    //rappresentazione dell'evento
     class Log {
         private String logEvent;
         private String logTime;

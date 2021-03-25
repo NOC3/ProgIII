@@ -1,9 +1,1 @@
-{
-  "last_inbox_id" : 0,
-  "inbox": [
-  ],
-
-  "last_sent_id": 0,
-  "sent": [
-  ]
-}
+{"unpulled_id":[],"last_inbox_id":2,"last_sent_id":2,"inbox":[{"date":"25-03-2021 11:05","sender":"mario@prova.com","recipients":"sara@prova.com","subject":"RE: Saluti a mario","id":1,"text":" > Mittente: sara@prova.com\n > Data: Thu Mar 25 11:05:00 CET 2021\n > Destinatari: mario@prova.com\n > Oggetto: Saluti a mario\n > Testo:\n > Ciao Mario\n\nGrazie Sara, saluti anche a te"},{"date":"25-03-2021 11:07","sender":"mario@prova.com","recipients":"sara@prova.com,luca@prova.com","subject":"RE: Richiesta  cose","id":2,"text":" > Mittente: sara@prova.com\n > Data: Thu Mar 25 11:06:00 CET 2021\n > Destinatari: mario@prova.com,luca@prova.com\n > Oggetto: Richiesta  cose\n > Testo:\n > Ciao,\n > dovreste ridarmi le mie cose\n\nIo le tue cose te le ho già ridate"}],"sent":[{"date":"25-03-2021 11:05","sender":"sara@prova.com","recipients":"mario@prova.com","subject":"Saluti a mario","id":1,"text":"Ciao Mario"},{"date":"25-03-2021 11:06","sender":"sara@prova.com","recipients":"mario@prova.com,luca@prova.com","subject":"Richiesta  cose","id":2,"text":"Ciao,\ndovreste ridarmi le mie cose"}]}

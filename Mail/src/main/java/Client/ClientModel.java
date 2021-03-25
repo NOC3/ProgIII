@@ -7,14 +7,15 @@ import javafx.collections.FXCollections;
 import javafx.util.Pair;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.util.ArrayList;
 
+//Model del client
 public class ClientModel {
+    //parametri configurazione delle socket
     private String host = "localhost";
     private final int port = 49152;
 
@@ -37,11 +38,14 @@ public class ClientModel {
         parseMailbox((JSONArray) mailbox.opt("inbox"), inbox);
         parseMailbox((JSONArray) mailbox.opt("sent"), sent);
 
+        //daemon di richiesta periodica email
         Request dm = new Request(Message.CHECK_NEW, this.email);
         dm.start();
     }
 
 
+    //aggiunge alla lista passata come parametro le email presenti nel json
+    //return del numero totale di email aggiunte
     public int parseMailbox(JSONArray array, SimpleListProperty<Email> list) {
         JSONObject mail;
         int i;
@@ -52,7 +56,7 @@ public class ClientModel {
         return i;
     }
 
-
+    //funzione di parsing da json a oggetto Email
     public Email fromJsonToEmail(JSONObject jo) {
         Email e =
                 new Email(jo.opt("id"), jo.opt("sender"), jo.opt("recipients"),
@@ -61,6 +65,7 @@ public class ClientModel {
         return e;
     }
 
+    //metodi di get
     public SimpleListProperty<Email> getInbox() {
         return inbox;
     }
@@ -77,6 +82,7 @@ public class ClientModel {
         return email;
     }
 
+    //funzioni chiamate dal controller
     public void sendNewEmail(Email e) {
         ClientModel.Request send = new ClientModel.Request(Message.SEND_NEW_EMAIL, e);
         send.start();
@@ -90,10 +96,12 @@ public class ClientModel {
         }
     }
 
+    //eliminazione dell'email usata nella Request se l'operazione si conclude correttamente
     public void deleteEmailFromList(SimpleListProperty<Email> list, Email e) {
         list.remove(e);
     }
 
+    //Oggetto Request, daemon di comunicazione con il server
     class Request extends Thread {
 
         private short operation;
@@ -105,7 +113,87 @@ public class ClientModel {
             this.setDaemon(true);
         }
 
+        @Override
+        public void run() {
+            Message m = new Message(operation, object);
+            Message response;
 
+
+            if (operation == Message.CHECK_NEW) {
+                //Request unica per utente, loop per la durata della connessione
+                while (true) {
+                    try {
+                        Thread.sleep(10000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    response = communicateToServer(m);
+
+                    assert response != null;
+                    if (response.getOperation() == Message.SUCCESS) {
+                        JSONObject js = new JSONObject((String) response.getObj());
+                        int mailNum = parseMailbox((JSONArray) js.opt("new"), inbox);
+                        String msg = "Hai ricevuto: " + mailNum + " nuov" + (mailNum == 1 ? "a" : "e") + " mail";
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                notificationsList.add(0, msg);
+                            }
+                        });
+                    }
+                }
+            } else { //Request che non sono il daemon che controlla se ci sono nuove email
+                response = communicateToServer(m);
+
+                assert response != null;
+                Message finalResponse = response;
+
+                //switch delle risposte dal server
+                if (response.getOperation() == Message.SUCCESS) {
+                    switch (this.operation) {
+                        case Message.REMOVE_EMAIL_INBOX:
+                            deleteEmailFromList(inbox, (Email) ((Pair) object).getKey());
+
+                            Platform.runLater(
+                                    () -> notificationsList.add(0, (String) finalResponse.getObj())
+                            );
+                            break;
+
+                        case Message.REMOVE_EMAIL_SENT:
+                            deleteEmailFromList(sent, (Email) ((Pair) object).getKey());
+
+                            Platform.runLater(
+                                    () -> notificationsList.add(0, (String) finalResponse.getObj())
+                            );
+                            break;
+
+                        case Message.SEND_NEW_EMAIL:
+                            Email ne = (Email) object;
+                            ne.setID((int) response.getObj());
+                            sent.add(0, ne);
+                            String msg = "Mail inviata correttamente a: " + ne.recipientsToString();
+
+                            Platform.runLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    notificationsList.add(0, msg);
+                                }
+                            });
+                            break;
+
+                        default:
+                            break;
+                    }
+                } else {
+                    Platform.runLater(
+                            () ->notificationsList.add(0, (String) finalResponse.getObj())
+                    );
+                }
+            }
+        }
+
+        //metodo di comunicazione verso il server
         private Message communicateToServer(Message toSend) {
             Socket socket = null;
             ObjectOutputStream out = null;
@@ -158,87 +246,6 @@ public class ClientModel {
                     } catch (Exception e) {
                         System.out.println("Errore chiusura stream o socket: \n" + e);
                     }
-                }
-            }
-        }
-
-        public void run() {
-            Message m = new Message(operation, object);
-            Message response;
-
-            //op that gets a "special treatment"
-            if (operation == Message.CHECK_NEW) {
-                while (true) {
-                    try {
-                        Thread.sleep(10000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
-                    response = communicateToServer(m);
-
-                    assert response != null;
-                    if (response.getOperation() == Message.SUCCESS) {
-                        JSONObject js = new JSONObject((String) response.getObj());
-                        int mailNum = parseMailbox((JSONArray) js.opt("new"), inbox);
-                        String msg = "Hai ricevuto: " + mailNum + " nuov" + (mailNum == 1 ? "a" : "e") + " mail";
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                notificationsList.add(0, msg);
-                            }
-                        });
-                    }
-                }
-            } else { //si può togliere dato il while true
-                response = communicateToServer(m);
-
-                assert response != null;
-                Message finalResponse = response;
-
-                if (response.getOperation() == Message.SUCCESS) {
-                    switch (this.operation) {
-                        case Message.REMOVE_EMAIL_INBOX:
-                            deleteEmailFromList(inbox, (Email) ((Pair) object).getKey());
-
-                            Platform.runLater(
-                                    () -> notificationsList.add(0, (String) finalResponse.getObj())
-
-                            );
-                            break;
-
-                        case Message.REMOVE_EMAIL_SENT:
-                            deleteEmailFromList(sent, (Email) ((Pair) object).getKey());
-
-                            Platform.runLater(
-                                    () -> notificationsList.add(0, (String) finalResponse.getObj())
-
-                            );
-                            break;
-
-                        case Message.SEND_NEW_EMAIL:
-                            Email ne = (Email) object;
-                            ne.setID((int) response.getObj());
-                            sent.add(0, ne);
-                            String msg = "Mail inviata correttamente a: " + ne.recipientsToString();
-
-                            Platform.runLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    notificationsList.add(0, msg);
-
-                                }
-                            });
-                            break;
-
-                        default:
-                            break;
-                    }
-                } else {
-                    Platform.runLater(
-                            () ->
-                                    notificationsList.add(0, (String) finalResponse.getObj())
-                    );
                 }
             }
         }

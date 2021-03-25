@@ -4,18 +4,14 @@ package Client;
 import Common.Email;
 import Common.Message;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.text.Text;
-import javafx.util.Callback;
-
 import javafx.scene.shape.Line;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
+//controller del client
 public class ClientController {
 
     public ClientModel model;
@@ -65,7 +61,6 @@ public class ClientController {
     @FXML
     private Text inboxDataText;
 
-    //Label dei campi delle mail
     @FXML
     private Text sentSubjectTextLabel;
     @FXML
@@ -78,7 +73,6 @@ public class ClientController {
     private Text inboxSenderTextLabel;
     @FXML
     private Text inboxDataTextLabel;
-
 
     @FXML
     private Button sendNewEmail;
@@ -118,8 +112,11 @@ public class ClientController {
     @FXML
     private Line inboxLine;
 
+    //bind tra model e view
     public void setModel(ClientModel m) {
         this.model = m;
+
+        //factory tabella inbox
         inboxDateColumn.setCellValueFactory(email
                 -> new SimpleStringProperty((email.getValue().getDate()).toString()));
 
@@ -129,6 +126,7 @@ public class ClientController {
         inboxSubjectColumn.setCellValueFactory(email
                 -> new SimpleStringProperty(email.getValue().getSubject()));
 
+        //factory tabella sent
         sentDateColumn.setCellValueFactory(email
                 -> new SimpleStringProperty((email.getValue().getDate()).toString()));
 
@@ -138,34 +136,33 @@ public class ClientController {
         sentSubjectColumn.setCellValueFactory(email
                 -> new SimpleStringProperty(email.getValue().getSubject()));
 
-
+        //bind inbox e sent
         sentList.setItems(this.model.getSent());
         inboxList.setItems(this.model.getInbox());
 
-        notificationsList.itemsProperty().bind(this.model.getNotificationsList());
-
-
+        //show dell'email selezionata
         inboxList.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> showInboxEmailDetails(newValue));
         sentList.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> showSentEmailDetails(newValue));
 
+        showInbox(false);
+        showSent(false);
+
+        //bind e inizializzazione notifiche
+        notificationsList.itemsProperty().bind(this.model.getNotificationsList());
         notifications.setExpanded(false);
         notificationsList.itemsProperty().addListener(event -> notifications.setExpanded(true));
+
 
         newEmail.setOnSelectionChanged(event -> {
             recipientsNewEmail.clear();
             subjectNewEmail.clear();
             textNewEmail.clear();
         });
-
-        showInbox(false);
-        showSent(false);
-
-
     }
 
-
+    //mostra/nasconde i dettagli della mail in sent
     private void showSentEmailDetails(Email e) {
         if (e != null) {
             sentDataText.setText(e.getDate().toString());
@@ -185,6 +182,7 @@ public class ClientController {
         }
     }
 
+    //mostra/nasconde i dettagli della mail in inbox
     private void showInboxEmailDetails(Email e) {
         if (e != null) {
             inboxSubjectText.setText(e.getSubject());
@@ -205,7 +203,7 @@ public class ClientController {
     }
 
 
-    private void showSent(boolean b){
+    private void showSent(boolean b) {
         sentLine.setVisible(b);
         sentSubjectTextLabel.setVisible(b);
         sentRecipientsTextLabel.setVisible(b);
@@ -216,7 +214,7 @@ public class ClientController {
         deleteEmailSent.setVisible(b);
     }
 
-    private void showInbox(boolean b){
+    private void showInbox(boolean b) {
         inboxLine.setVisible(b);
         inboxSubjectTextLabel.setVisible(b);
         inboxSenderTextLabel.setVisible(b);
@@ -227,7 +225,8 @@ public class ClientController {
         replyInbox.setVisible(b);
     }
 
-
+    //funzioni collegate ai bottoni di azione dell'email
+    //recuperano i dati dalla view e li passano al model
     @FXML
     private void sendNewEmail() {
         String[] destinatari = recipientsNewEmail.getText().split(",");
@@ -236,9 +235,9 @@ public class ClientController {
         for (String dest : destinatari) {
             if (!Email.validateEmailAddress(dest)) {
                 String mex;
-                if(dest == ""){
+                if (dest == "") {
                     mex = "Inserire destinatari";
-                }else {
+                } else {
                     mex = "Destinatari non corretti: " + dest;
                 }
                 model.getNotificationsList().add(0, mex);
@@ -248,10 +247,8 @@ public class ClientController {
                 rec.add(dest.trim());
         }
 
-
         String subject = subjectNewEmail.getText();
         String text = textNewEmail.getText();
-
 
         Date data = new Date();
         Email e = new Email(-1, this.model.getEmail(), rec, subject, text, data);
@@ -321,9 +318,8 @@ public class ClientController {
 
         String recipients = e.getSender();
         for (String st : e.getRecipients()) {
-            if (!st.equals(model.getEmail())) {
+            if (!st.equals(model.getEmail()))
                 recipients += "," + st;
-            }
         }
 
         String oggetto = "RE: " + e.getSubject();

@@ -1,20 +1,18 @@
 package Common;
 
-import javafx.beans.property.SimpleStringProperty;
 import org.json.JSONObject;
 
-import javax.xml.crypto.Data;
 import java.io.Serializable;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Email implements Serializable{
+//oggetto che rappresenta l'email
+public class Email implements Serializable {
+
     private int ID;
     private final String sender;
     private final ArrayList<String> recipients;
@@ -31,9 +29,8 @@ public class Email implements Serializable{
         this.date = data;
     }
 
+    //Costruttore generico
     public Email(Object id, Object mittente, Object destinatari, Object oggetto, Object testo, Object data) {
-
-
         ID = (int) id;
         this.sender = (String) mittente;
         this.recipients = recipientsToList((String) destinatari);
@@ -44,7 +41,7 @@ public class Email implements Serializable{
 
         Date d = null;
         try {
-            d = formatter.parse((String)data);
+            d = formatter.parse((String) data);
         } catch (ParseException e) {
             System.out.println("Formato data non riconosciuto");
         } finally {
@@ -52,7 +49,7 @@ public class Email implements Serializable{
         }
     }
 
-
+    //metodi get e set
     public Date getDate() {
         return date;
     }
@@ -81,50 +78,12 @@ public class Email implements Serializable{
         ID = id;
     }
 
-    public void print() {
-        System.out.println(this.toString());
-    }
-
     @Override
     public String toString() {
         return "Mittente: " + sender + "\nData: " + date + "\nDestinatari: " + recipientsToString() + "\nOggetto: " + subject + "\nTesto:\n" + text;
     }
 
-    public SimpleStringProperty mittenteToProperty() {
-        SimpleStringProperty m = new SimpleStringProperty();
-        m.set(sender);
-        return m;
-    }
-
-
-    public ArrayList<SimpleStringProperty> destinatariToProperty() {
-        ArrayList<SimpleStringProperty> a = new ArrayList<>();
-        for (String dest : recipients) {
-            SimpleStringProperty m = new SimpleStringProperty();
-            m.set(dest);
-            a.add(m);
-        }
-        return a;
-    }
-
-    public SimpleStringProperty dateToProperty() {
-        SimpleStringProperty m = new SimpleStringProperty();
-        m.set(String.valueOf(date));
-        return m;
-    }
-
-    public SimpleStringProperty oggettoToProperty() {
-        SimpleStringProperty o = new SimpleStringProperty();
-        o.set(subject);
-        return o;
-    }
-
-    public SimpleStringProperty testoToProperty() {
-        SimpleStringProperty t = new SimpleStringProperty();
-        t.set(text);
-        return t;
-    }
-
+    //converte la stringa dei destinatari in array
     public ArrayList<String> recipientsToList(String s) {
         ArrayList<String> al = new ArrayList<>();
         for (String st : s.split(",")) {
@@ -133,15 +92,17 @@ public class Email implements Serializable{
         return al;
     }
 
+    //converte l'array dei destinatari in stringa
     public String recipientsToString() {
         ArrayList<String> rec = getRecipients();
         String recStr = "";
         for (String r : rec) {
             recStr += r + ",";
         }
-        return recStr.substring(0, recStr.length()-1);
+        return recStr.substring(0, recStr.length() - 1);
     }
 
+    //converte la mail JSONObject
     public JSONObject toJSON() {
         JSONObject json = new JSONObject();
         json.put("id", this.ID);
@@ -157,14 +118,14 @@ public class Email implements Serializable{
 
     @Override
     public boolean equals(Object o) {
-        if(o instanceof Email){
-            return this.ID==((Email) o).getID();
-        }else{
+        if (o instanceof Email) {
+            return this.ID == ((Email) o).getID();
+        } else {
             return false;
         }
     }
 
-
+    //controllo validità mail tramite regex
     public static boolean validateEmailAddress(String email) {
         Pattern pattern = Pattern.compile("^.+@.+\\..+$");
         Matcher matcher = pattern.matcher(email);

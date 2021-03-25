@@ -3,6 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Client.ClientController">
@@ -17,9 +18,9 @@
                                     <children>
                                         <TableView fx:id="inboxList" layoutX="-5.0" layoutY="-1.0" prefHeight="191.0" prefWidth="476.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                             <columns>
-                                                <TableColumn fx:id="inboxDateColumn" prefWidth="75.0" text="Data" />
-                                                <TableColumn fx:id="inboxSenderColumn" prefWidth="75.0" text="Mittente" />
-                                                <TableColumn fx:id="inboxSubjectColumn" prefWidth="75.0" text="Oggetto" />
+                                                <TableColumn fx:id="inboxDateColumn" editable="false" minWidth="100.0" prefWidth="150.0" text="Data" />
+                                                <TableColumn fx:id="inboxSenderColumn" editable="false" minWidth="100.0" prefWidth="150.0" sortable="false" text="Mittente" />
+                                                <TableColumn fx:id="inboxSubjectColumn" editable="false" minWidth="100.0" prefWidth="150.0" sortable="false" text="Oggetto" />
                                             </columns>
                                         </TableView>
                                     </children>
@@ -32,7 +33,7 @@
                                         <Text fx:id="inboxDataText" layoutX="112.0" layoutY="80.0" strokeType="OUTSIDE" strokeWidth="0.0" text="" />
                                         <Text fx:id="inboxSubjectTextLabel" layoutX="15.0" layoutY="95.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Oggetto" />
                                         <Text fx:id="inboxSubjectText" layoutX="112.0" layoutY="95.0" strokeType="OUTSIDE" strokeWidth="0.0" text="" />
-                                        <Text fx:id="inboxTextText" layoutX="15.0" layoutY="110" strokeType="OUTSIDE" strokeWidth="0.0" text="" wrappingWidth="443.7294921875" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="141.2705078125" AnchorPane.topAnchor="99.0" />
+                                        <Text fx:id="inboxTextText" layoutX="15.0" layoutY="131.0" strokeType="OUTSIDE" strokeWidth="0.0" text="" wrappingWidth="443.7294921875" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="141.2705078125" AnchorPane.topAnchor="117.10299968719482" />
                                         <Button fx:id="deleteEmailInbox" layoutX="28.0" layoutY="5.0" mnemonicParsing="false" onAction="#deleteEmail" prefHeight="34.0" prefWidth="33.0">
                                             <graphic>
                                                 <ImageView fitHeight="27.0" fitWidth="27.0">
@@ -70,6 +71,7 @@
                                                 </ImageView>
                                             </graphic>
                                         </Button>
+                              <Line fx:id="inboxLine" endX="438.0" layoutX="15.0" layoutY="107.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" />
                                     </children>
                                 </AnchorPane>
                             </items>
@@ -84,9 +86,9 @@
                                     <children>
                                         <TableView fx:id="sentList" layoutX="-5.0" layoutY="-1.0" prefHeight="144.0" prefWidth="466.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-6.0" AnchorPane.topAnchor="0.0">
                                             <columns>
-                                                <TableColumn fx:id="sentDateColumn" prefWidth="75.0" text="Data" />
-                                                <TableColumn fx:id="sentRecipientsColumn" prefWidth="75.0" text="Destinatari" />
-                                                <TableColumn fx:id="sentSubjectColumn" prefWidth="75.0" text="Oggetto" />
+                                                <TableColumn fx:id="sentDateColumn" minWidth="100.0" prefWidth="150.0" text="Data" />
+                                                <TableColumn fx:id="sentRecipientsColumn" minWidth="100.0" prefWidth="150.0" sortable="false" text="Destinatari" />
+                                                <TableColumn fx:id="sentSubjectColumn" minWidth="100.0" prefWidth="150.0" sortable="false" text="Oggetto" />
                                             </columns>
                                         </TableView>
                                     </children>
@@ -99,7 +101,7 @@
                                         <Text fx:id="sentDataText" layoutX="112.0" layoutY="80.0" strokeType="OUTSIDE" strokeWidth="0.0" text="" />
                                         <Text fx:id="sentSubjectTextLabel" layoutX="15.0" layoutY="95.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Oggetto" />
                                         <Text fx:id="sentSubjectText" layoutX="112.0" layoutY="95.0" strokeType="OUTSIDE" strokeWidth="0.0" text="" />
-                                        <Text fx:id="sentTextText" layoutX="15.0" layoutY="110.0" strokeType="OUTSIDE" strokeWidth="0.0" text="" wrappingWidth="443.7294921875" />
+                                        <Text fx:id="sentTextText" layoutX="15.0" layoutY="131.0" strokeType="OUTSIDE" strokeWidth="0.0" text="" wrappingWidth="443.7294921875" />
                               <Button fx:id="deleteEmailSent" layoutX="28.0" layoutY="5.0" mnemonicParsing="false" onAction="#deleteEmail" prefHeight="34.0" prefWidth="33.0">
                                  <graphic>
                                     <ImageView fitHeight="27.0" fitWidth="27.0">
@@ -137,6 +139,7 @@
                                  </graphic>
                               </Button>
 
+                                        <Line fx:id="sentLine" endX="438.0" layoutX="15.0" layoutY="107.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" />
                                     </children>
                                 </AnchorPane>
                             </items>
@@ -150,7 +153,7 @@
                                 <TextField fx:id="recipientsNewEmail" layoutX="14.0" layoutY="14.0" prefHeight="26.0" prefWidth="437.0" promptText="Destinatari" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0" />
                                 <TextField fx:id="subjectNewEmail" layoutX="14.0" layoutY="51.0" prefHeight="26.0" prefWidth="437.0" promptText="Oggetto" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="50.0" />
                                 <TextArea fx:id="textNewEmail" layoutX="14.0" layoutY="87.0" prefHeight="220.0" prefWidth="438.0" promptText="Scrivi qua" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="87.0" />
-                                <Button fx:id="sendNewEmail" alignment="CENTER" layoutX="275.0" layoutY="321.0" maxHeight="26.0" maxWidth="50.0" minHeight="26.0" minWidth="50.0" mnemonicParsing="false" onAction="#sendNewEmail" prefHeight="26.0" prefWidth="50.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="275.0" AnchorPane.rightAnchor="275.0">
+                                <Button fx:id="sendNewEmail" alignment="CENTER" layoutX="275.0" layoutY="321.0" mnemonicParsing="false" onAction="#sendNewEmail" AnchorPane.bottomAnchor="8.0">
                                     <graphic>
                                         <ImageView fitHeight="27.0" fitWidth="27.0">
                                             <image>

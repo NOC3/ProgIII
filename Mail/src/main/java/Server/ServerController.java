@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
+//Controller del logger
 public class ServerController {
     private ServerModel model;
 
@@ -15,16 +16,18 @@ public class ServerController {
     @FXML
     private TableColumn<ServerModel.Log, String> event;
 
-
-    public void setModel(ServerModel model){
+    //bind tra model e view
+    public void setModel(ServerModel model) {
         this.model = model;
 
+        //factory della tabella dei log
         time.setCellValueFactory(log
-                ->new SimpleStringProperty(log.getValue().getLogTime()));
+                -> new SimpleStringProperty(log.getValue().getLogTime()));
 
         event.setCellValueFactory(log
-                ->new SimpleStringProperty(log.getValue().getLogEvent()));
+                -> new SimpleStringProperty(log.getValue().getLogEvent()));
 
+        //bind dei log
         logs.setItems(this.model.getLogs());
     }
 }
