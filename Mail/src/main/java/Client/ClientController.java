@@ -105,7 +105,7 @@ public class ClientController {
     private TitledPane notifications;
 
     @FXML
-    private ListView notificationsList;
+    private ListView<String> notificationsList;
 
     @FXML
     private Line sentLine;
@@ -150,7 +150,7 @@ public class ClientController {
         showInbox(false);
         showSent(false);
 
-        notificationsList.setCellFactory((Callback<ListView<String>, ListCell<String>>) list -> new ListCell<>() {
+        notificationsList.setCellFactory(list -> new ListCell<>() {
             {
                 Text text = new Text();
                 text.wrappingWidthProperty().bind(list.widthProperty().subtract(10));
