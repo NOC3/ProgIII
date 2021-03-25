@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.text.Text;
 import javafx.scene.shape.Line;
+import javafx.util.Callback;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -148,6 +149,17 @@ public class ClientController {
 
         showInbox(false);
         showSent(false);
+
+        notificationsList.setCellFactory((Callback<ListView<String>, ListCell<String>>) list -> new ListCell<>() {
+            {
+                Text text = new Text();
+                text.wrappingWidthProperty().bind(list.widthProperty().subtract(10));
+                text.textProperty().bind(itemProperty());
+
+                setPrefWidth(0);
+                setGraphic(text);
+            }
+        });
 
         //bind e inizializzazione notifiche
         notificationsList.itemsProperty().bind(this.model.getNotificationsList());
